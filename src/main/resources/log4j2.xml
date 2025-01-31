@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" xmlns="http://logging.apache.org/log4j/2.0/config">
+    <Properties>
+        <Property name="APPLICATION_NAME">
+            ${env:NAME:-Test4Rest}
+        </Property>
+        <Property name="LOG_PATTERN">
+            [%d{ISO8601_OFFSET_DATE_TIME_HHCMM}] [${APPLICATION_NAME}] [%p] [%c{1.}.%M Line:%L] : %m%n
+        </Property>
+        <Property name="FILE_NAME">
+            ${env:LOG_PATH:-/tmp/${APPLICATION_NAME}/logs/${APPLICATION_NAME}.log}
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="${LOG_PATTERN}"/>
+        </Console>
+        <File name="log-file" fileName="${FILE_NAME}">
+            <PatternLayout
+                    pattern="${LOG_PATTERN}"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="log-file"/>
+        </Root>
+        <Logger name="info-logger" level="INFO">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="log-file"/>
+        </Logger>
+        <Logger name="error-logger" level="ERROR">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="log-file"/>
+        </Logger>
+    </Loggers>
+</Configuration>
