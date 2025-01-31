@@ -1,5 +1,6 @@
 package io.test4rest.app.service.impl;
 
+import io.test4rest.app.helper.ApiServiceHelper;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
 import io.test4rest.app.service.ApiService;
@@ -13,33 +14,43 @@ import java.net.URL;
 
 import static io.test4rest.app.constants.CommonConstants.AMPERSAND_CHAR;
 
-public class GetApiService extends ApiService {
-    private final static Logger log = LogManager.getLogger(GetApiService.class);
+public class DefaultApiServiceImpl implements ApiService {
+    private final static Logger log = LogManager.getLogger(DefaultApiServiceImpl.class);
+    private final ApiServiceHelper apiServiceHelper;
+
+    public DefaultApiServiceImpl() {
+        this.apiServiceHelper = new ApiServiceHelper();
+    }
 
     @Override
     public ApiResponse callApi(ApiRequest request) {
         ApiResponse response = new ApiResponse();
-        StringBuilder queries = getQueryParam(request);
+
+        // creating query param string
+        StringBuilder queries = apiServiceHelper.getQueryParam(request);
 
         try {
             URI uri = new URI(request.getUrl());
             String query = uri.getQuery();
-            if (query == null) {
-                query = queries.toString();
-            } else {
-                query += AMPERSAND_CHAR + queries;
+            if (query != null || !queries.isEmpty()) {
+                if (query == null) {
+                    query = queries.toString();
+                } else {
+                    query += AMPERSAND_CHAR + queries;
+                }
+                uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), query, uri.getFragment());
             }
-            uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), query, uri.getFragment());
             URL url = uri.toURL();
             long startTime = System.currentTimeMillis();
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
             // adding request headers
-            addRequestHeaders(httpURLConnection, request);
+            apiServiceHelper.addRequestHeaders(httpURLConnection, request);
 
             // adding request body
-            addRequestBodyToHttpURLConnection(httpURLConnection, request);
+            apiServiceHelper.addRequestBodyToHttpURLConnection(httpURLConnection, request);
 
+            // setting request method
             httpURLConnection.setRequestMethod(request.getMethod().getHttpMethodName());
             httpURLConnection.connect();
 
@@ -48,10 +59,11 @@ public class GetApiService extends ApiService {
             response.setDuration(System.currentTimeMillis() - startTime);
             response.setStatusCode(httpURLConnection.getResponseCode());
 
-            addResponseHeaders(httpURLConnection, response);
+            apiServiceHelper.addResponseHeaders(httpURLConnection, response);
 
-            String responseBody = getResponseBody(inputStream);
+            String responseBody = apiServiceHelper.getResponseBody(inputStream);
             response.setBody(responseBody);
+            response.setResponseStatus(httpURLConnection.getResponseMessage());
         } catch (Exception exception) {
             log.error(exception.getMessage());
         }

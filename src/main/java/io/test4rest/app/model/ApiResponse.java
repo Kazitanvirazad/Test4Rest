@@ -9,13 +9,15 @@ public class ApiResponse {
     private int statusCode;
     private long duration;
     private String prettyText;
+    private String responseStatus;
 
-    public ApiResponse(String body, Map<String, String> headers, int statusCode, long duration, String prettyText) {
+    public ApiResponse(String body, Map<String, String> headers, int statusCode, long duration, String prettyText, String responseStatus) {
         this.body = body;
         this.headers = headers;
         this.statusCode = statusCode;
         this.duration = duration;
         this.prettyText = prettyText;
+        this.responseStatus = responseStatus;
     }
 
     public ApiResponse() {
@@ -64,5 +66,13 @@ public class ApiResponse {
 
     public void setPrettyText(String prettyText) {
         this.prettyText = prettyText;
+    }
+
+    public String getResponseStatus() {
+        return responseStatus;
+    }
+
+    public void setResponseStatus(String responseStatus) {
+        this.responseStatus = responseStatus;
     }
 }

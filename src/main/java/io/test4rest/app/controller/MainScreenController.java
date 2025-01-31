@@ -1,11 +1,10 @@
 package io.test4rest.app.controller;
 
-import io.test4rest.app.constants.CommonConstants;
 import io.test4rest.app.constants.HttpMethod;
-import io.test4rest.app.helper.ApiServiceHelper;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
 import io.test4rest.app.service.ApiService;
+import io.test4rest.app.service.impl.DefaultApiServiceImpl;
 import io.test4rest.app.util.JsonUtil;
 import io.test4rest.app.util.StringUtils;
 import javafx.collections.FXCollections;
@@ -29,6 +28,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
+import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 import static io.test4rest.app.constants.CommonConstants.MILLIS_SHORT_FORM;
 
 public class MainScreenController implements Initializable {
@@ -65,7 +65,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public void callApi() {
-        ApiService apiService = ApiServiceHelper.getApiService(http_method_selector.getValue());
+        ApiService apiService = new DefaultApiServiceImpl();
         ApiRequest request = new ApiRequest();
         request.setUrl(url_field.getText().trim());
         request.setMethod(http_method_selector.getValue());
@@ -77,7 +77,10 @@ public class MainScreenController implements Initializable {
         response_body_output.clear();
         response_body_output.setText(response.getBody());
         response_time.setText(response.getDuration() + EMPTY_SPACE + MILLIS_SHORT_FORM);
-        response_status_code.setText(String.valueOf(response.getStatusCode()));
+
+        String status = response.getStatusCode() +
+                (StringUtils.hasText(response.getResponseStatus()) ? EMPTY_SPACE + response.getResponseStatus() : EMPTY_STRING);
+        response_status_code.setText(status);
 
         isResponsePrettified = false;
     }
