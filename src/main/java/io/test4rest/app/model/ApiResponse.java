@@ -10,14 +10,18 @@ public class ApiResponse {
     private long duration;
     private String prettyText;
     private String responseStatus;
+    private boolean networkError;
+    private String errorDisplayMessage;
 
-    public ApiResponse(String body, Map<String, String> headers, int statusCode, long duration, String prettyText, String responseStatus) {
+    public ApiResponse(String body, long duration, String errorDisplayMessage, Map<String, String> headers, boolean networkError, String prettyText, String responseStatus, int statusCode) {
         this.body = body;
-        this.headers = headers;
-        this.statusCode = statusCode;
         this.duration = duration;
+        this.errorDisplayMessage = errorDisplayMessage;
+        this.headers = headers;
+        this.networkError = networkError;
         this.prettyText = prettyText;
         this.responseStatus = responseStatus;
+        this.statusCode = statusCode;
     }
 
     public ApiResponse() {
@@ -74,5 +78,21 @@ public class ApiResponse {
 
     public void setResponseStatus(String responseStatus) {
         this.responseStatus = responseStatus;
+    }
+
+    public String getErrorDisplayMessage() {
+        return errorDisplayMessage;
+    }
+
+    public void setErrorDisplayMessage(String errorDisplayMessage) {
+        this.errorDisplayMessage = errorDisplayMessage;
+    }
+
+    public boolean isNetworkError() {
+        return networkError;
+    }
+
+    public void setNetworkError(boolean networkError) {
+        this.networkError = networkError;
     }
 }

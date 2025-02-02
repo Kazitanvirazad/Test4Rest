@@ -2,7 +2,8 @@ module io.test4rest.app {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.apache.logging.log4j;
-    requires com.fasterxml.jackson.databind;
+    requires java.net.http;
+    requires com.google.gson;
 
 
     opens io.test4rest.app to javafx.fxml;

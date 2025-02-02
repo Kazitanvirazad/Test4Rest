@@ -44,14 +44,14 @@ public class DefaultApiServiceImpl implements ApiService {
             long startTime = System.currentTimeMillis();
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
+            // setting request method
+            httpURLConnection.setRequestMethod(request.getMethod().getHttpMethodName());
+
             // adding request headers
             apiServiceHelper.addRequestHeaders(httpURLConnection, request);
 
             // adding request body
             apiServiceHelper.addRequestBodyToHttpURLConnection(httpURLConnection, request);
-
-            // setting request method
-            httpURLConnection.setRequestMethod(request.getMethod().getHttpMethodName());
             httpURLConnection.connect();
 
             InputStream inputStream = httpURLConnection.getInputStream();
@@ -65,7 +65,9 @@ public class DefaultApiServiceImpl implements ApiService {
             response.setBody(responseBody);
             response.setResponseStatus(httpURLConnection.getResponseMessage());
         } catch (Exception exception) {
-            log.error(exception.getMessage());
+            log.error(exception);
+            response.setNetworkError(true);
+            response.setErrorDisplayMessage(exception.toString());
         }
         return response;
     }

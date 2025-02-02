@@ -114,7 +114,7 @@ public class MainScreenController implements Initializable {
     private void zoomOutResponseText(MouseEvent event) {
         Font initialFont = response_body_output.getFont();
         double size = initialFont.getSize();
-        if (size > 10) {
+        if (size > 12) {
             Font font = Font.font(initialFont.getFamily(), size - 1.0);
             response_body_output.setFont(font);
         }
