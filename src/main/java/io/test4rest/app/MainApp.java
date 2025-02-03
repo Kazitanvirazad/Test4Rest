@@ -6,8 +6,6 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-
 public class MainApp extends Application {
     private static final Logger log = LogManager.getLogger(MainApp.class);
     private final MainAppLoaderService mainAppLoaderService;
@@ -22,7 +20,7 @@ public class MainApp extends Application {
         try {
             mainAppLoaderService.loadMainAppScreenComponents(primaryStage);
             primaryStage.show();
-        } catch (IOException | NullPointerException exception) {
+        } catch (Exception exception) {
             log.error("Application failed to start.");
             log.error(exception.getMessage());
             System.exit(0);

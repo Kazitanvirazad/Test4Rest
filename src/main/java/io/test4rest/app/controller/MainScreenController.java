@@ -17,6 +17,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
@@ -30,13 +32,18 @@ import java.util.ResourceBundle;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 import static io.test4rest.app.constants.CommonConstants.MILLIS_SHORT_FORM;
+import static io.test4rest.app.constants.HttpMethod.DELETE;
+import static io.test4rest.app.constants.HttpMethod.GET;
+import static io.test4rest.app.constants.HttpMethod.HEAD;
+import static io.test4rest.app.constants.HttpMethod.OPTIONS;
+import static io.test4rest.app.constants.HttpMethod.PATCH;
+import static io.test4rest.app.constants.HttpMethod.POST;
+import static io.test4rest.app.constants.HttpMethod.PUT;
 
 public class MainScreenController implements Initializable {
     private static final Logger log = LogManager.getLogger(MainScreenController.class);
     @FXML
     public AnchorPane main_screen_cont;
-    @FXML
-    public AnchorPane url_input_cont;
     @FXML
     public ChoiceBox<HttpMethod> http_method_selector;
     @FXML
@@ -44,11 +51,7 @@ public class MainScreenController implements Initializable {
     @FXML
     public Button send_bttn;
     @FXML
-    public AnchorPane request_input_cont;
-    @FXML
     public TextArea request_body_input;
-    @FXML
-    public AnchorPane response_input_cont;
     @FXML
     public TextArea response_body_output;
     @FXML
@@ -59,8 +62,12 @@ public class MainScreenController implements Initializable {
     public ImageView zoom_in;
     @FXML
     public ImageView zoom_out;
+    @FXML
+    public ImageView text_wrap;
+    @FXML
+    public ImageView copy_responseTxt;
 
-    private boolean isResponsePrettified = false;
+    private boolean isResponsePrettified;
     private ApiResponse response;
 
     @FXML
@@ -83,6 +90,7 @@ public class MainScreenController implements Initializable {
         response_status_code.setText(status);
 
         isResponsePrettified = false;
+        prettifyResponse(null);
     }
 
     @FXML
@@ -120,25 +128,58 @@ public class MainScreenController implements Initializable {
         }
     }
 
+    private void wrapResponseText(MouseEvent event) {
+        if (response_body_output.isWrapText()) {
+            response_body_output.wrapTextProperty().setValue(false);
+        } else {
+            response_body_output.wrapTextProperty().setValue(true);
+        }
+    }
+
+    private void copyResponseText(MouseEvent event) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent clipboardContent = new ClipboardContent();
+        if (response != null && StringUtils.hasText(response.getBody())) {
+            if (isResponsePrettified) {
+                clipboardContent.putString(response.getPrettyText());
+            } else {
+                clipboardContent.putString(response.getBody());
+            }
+        } else {
+            clipboardContent.putString(EMPTY_STRING);
+        }
+        clipboard.setContent(clipboardContent);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // initialising zoom in and out buttons
         Image zoomIn = new Image("/static/icons/zoom-in-24.png");
         Image zoomOut = new Image("/static/icons/zoom-out-24.png");
         zoom_in.setImage(zoomIn);
         zoom_out.setImage(zoomOut);
-
         zoom_in.addEventHandler(MouseEvent.MOUSE_CLICKED, this::zoomInResponseText);
         zoom_out.addEventHandler(MouseEvent.MOUSE_CLICKED, this::zoomOutResponseText);
 
-        HttpMethod[] methods =
-                {HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.PATCH, HttpMethod.HEAD, HttpMethod.OPTIONS};
-
+        // initialising Http method ChoiceBox selector
+        HttpMethod[] methods = {GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS};
         http_method_selector.setItems(FXCollections.observableArrayList(methods));
-        http_method_selector.setValue(HttpMethod.GET);
+        http_method_selector.setValue(GET);
         http_method_selector.getSelectionModel()
                 .selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) ->
                         http_method_selector.setValue(methods[newValue.intValue()])
                 );
+
+        // initialising response text wrap button
+        Image wordWrapIcon = new Image("/static/icons/word-wrap-24.png");
+        text_wrap.setImage(wordWrapIcon);
+        text_wrap.addEventHandler(MouseEvent.MOUSE_CLICKED, this::wrapResponseText);
+        response_body_output.wrapTextProperty().setValue(true);
+
+        // initialising copy response text button
+        Image copyResponseText = new Image("/static/icons/copy-24.png");
+        copy_responseTxt.setImage(copyResponseText);
+        copy_responseTxt.addEventHandler(MouseEvent.MOUSE_CLICKED, this::copyResponseText);
     }
 }

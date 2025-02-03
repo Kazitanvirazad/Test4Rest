@@ -1,0 +1,18 @@
+
+#http_method_selector {
+  -fx-background-radius: 5;
+}
+
+#url_field {
+  -fx-background-radius: 5;
+}
+
+#send_bttn {
+  -fx-background-color: #08c43d;
+  -fx-background-radius: 5;
+  -fx-border-width: 0;
+}
+
+#send_bttn::hover {
+  -fx-background-color: #0aa134;
+}
