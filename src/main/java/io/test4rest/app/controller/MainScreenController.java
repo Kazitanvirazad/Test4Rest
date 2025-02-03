@@ -3,6 +3,7 @@ package io.test4rest.app.controller;
 import io.test4rest.app.constants.HttpMethod;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
+import io.test4rest.app.model.KeyValue;
 import io.test4rest.app.service.ApiService;
 import io.test4rest.app.service.impl.DefaultApiServiceImpl;
 import io.test4rest.app.util.JsonUtil;
@@ -13,8 +14,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -66,6 +70,12 @@ public class MainScreenController implements Initializable {
     public ImageView text_wrap;
     @FXML
     public ImageView copy_responseTxt;
+    @FXML
+    public TableView<KeyValue> query_param_table;
+    @FXML
+    public TableColumn<KeyValue, String> queryParamKey;
+    @FXML
+    public TableColumn<KeyValue, String> queryParamValue;
 
     private boolean isResponsePrettified;
     private ApiResponse response;
@@ -181,5 +191,11 @@ public class MainScreenController implements Initializable {
         Image copyResponseText = new Image("/static/icons/copy-24.png");
         copy_responseTxt.setImage(copyResponseText);
         copy_responseTxt.addEventHandler(MouseEvent.MOUSE_CLICKED, this::copyResponseText);
+
+
+        // initialising query param tableview -> refer https://youtu.be/uh5R7D_vFto
+        queryParamKey.setCellValueFactory(new PropertyValueFactory<>("key"));
+        queryParamKey.setCellValueFactory(new PropertyValueFactory<>("value"));
+
     }
 }

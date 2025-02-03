@@ -27,12 +27,6 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Text layoutX="218.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request" />
-      <TextArea fx:id="request_body_input" layoutX="218.0" layoutY="138.0" prefHeight="135.0" prefWidth="572.0">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </TextArea>
       <Text layoutX="218.0" layoutY="307.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Response" />
       <Button layoutX="293.0" layoutY="290.0" mnemonicParsing="false" onAction="#prettifyResponse" prefHeight="25.0" prefWidth="31.0" text="{ }">
          <cursor>
@@ -62,5 +56,44 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
+      <TabPane layoutX="216.0" layoutY="115.0" prefHeight="168.0" prefWidth="572.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="Params">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="query_param_table" editable="true" layoutX="6.0" layoutY="1.0" prefHeight="114.0" prefWidth="565.0">
+                          <columns>
+                            <TableColumn fx:id="queryParamKey" prefWidth="154.0" text="Key" />
+                            <TableColumn fx:id="queryParamValue" prefWidth="409.0" sortable="false" text="Value" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+          <Tab text="Headers">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+          <Tab text="Body">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="139.0" prefWidth="539.0">
+                     <children>
+                        <TextArea fx:id="request_body_input" layoutY="25.0" prefHeight="114.0" prefWidth="572.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextArea>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

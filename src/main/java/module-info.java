@@ -10,4 +10,5 @@ module io.test4rest.app {
     exports io.test4rest.app;
     exports io.test4rest.app.controller;
     exports io.test4rest.app.constants;
+    exports io.test4rest.app.model;
 }
