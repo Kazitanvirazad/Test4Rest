@@ -34,11 +34,21 @@ public class ApiRequest {
     }
 
     public Map<String, String> getHeaders() {
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
         return headers;
     }
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
+    }
+
+    public void addHeader(String key, String value) {
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
+        this.headers.put(key, value);
     }
 
     public HttpMethod getMethod() {
@@ -58,10 +68,20 @@ public class ApiRequest {
     }
 
     public Map<String, String> getQueryParams() {
+        if (this.queryParams == null) {
+            this.queryParams = new HashMap<>();
+        }
         return queryParams;
     }
 
     public void setQueryParams(Map<String, String> queryParams) {
         this.queryParams = queryParams;
+    }
+
+    public void addQueryParam(String key, String value) {
+        if (this.queryParams == null) {
+            this.queryParams = new HashMap<>();
+        }
+        this.queryParams.put(key, value);
     }
 }

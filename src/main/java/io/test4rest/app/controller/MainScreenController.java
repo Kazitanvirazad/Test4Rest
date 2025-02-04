@@ -8,7 +8,9 @@ import io.test4rest.app.service.ApiService;
 import io.test4rest.app.service.impl.DefaultApiServiceImpl;
 import io.test4rest.app.util.JsonUtil;
 import io.test4rest.app.util.StringUtils;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,6 +21,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -31,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
@@ -76,6 +80,12 @@ public class MainScreenController implements Initializable {
     public TableColumn<KeyValue, String> queryParamKey;
     @FXML
     public TableColumn<KeyValue, String> queryParamValue;
+    @FXML
+    public TableView<KeyValue> header_table;
+    @FXML
+    public TableColumn<KeyValue, String> headerKey;
+    @FXML
+    public TableColumn<KeyValue, String> headerValue;
 
     private boolean isResponsePrettified;
     private ApiResponse response;
@@ -85,10 +95,12 @@ public class MainScreenController implements Initializable {
         ApiService apiService = new DefaultApiServiceImpl();
         ApiRequest request = new ApiRequest();
         request.setUrl(url_field.getText().trim());
+        addQueryParamsToRequest(request);
         request.setMethod(http_method_selector.getValue());
         if (StringUtils.hasText(request_body_input.getText())) {
             request.setBody(request_body_input.getText());
         }
+        addHeadersToRequest(request);
 
         response = apiService.callApi(request);
         response_body_output.clear();
@@ -161,6 +173,42 @@ public class MainScreenController implements Initializable {
         clipboard.setContent(clipboardContent);
     }
 
+    @FXML
+    public void updateQueryParamKey(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
+        KeyValue selectedQueryParam = query_param_table.getSelectionModel().getSelectedItem();
+        selectedQueryParam.setKey(cellEditEvent.getNewValue());
+    }
+
+    @FXML
+    public void updateQueryParamValue(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
+        KeyValue selectedQueryParam = query_param_table.getSelectionModel().getSelectedItem();
+        selectedQueryParam.setValue(cellEditEvent.getNewValue());
+    }
+
+    @FXML
+    public void updateHeaderKey(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
+        KeyValue selectedHeader = header_table.getSelectionModel().getSelectedItem();
+        selectedHeader.setKey(cellEditEvent.getNewValue());
+    }
+
+    @FXML
+    public void updateHeaderValue(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
+        KeyValue selectedHeader = query_param_table.getSelectionModel().getSelectedItem();
+        selectedHeader.setValue(cellEditEvent.getNewValue());
+    }
+
+    private void addHeadersToRequest(ApiRequest request) {
+        if (header_table != null && !header_table.getItems().isEmpty()) {
+            header_table.getItems().forEach(keyValue -> request.addHeader(keyValue.getKey(), keyValue.getValue()));
+        }
+    }
+
+    private void addQueryParamsToRequest(ApiRequest request) {
+        if (query_param_table != null && !query_param_table.getItems().isEmpty()) {
+            query_param_table.getItems().forEach(keyValue -> request.addQueryParam(keyValue.getKey(), keyValue.getValue()));
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // initialising zoom in and out buttons
@@ -192,10 +240,34 @@ public class MainScreenController implements Initializable {
         copy_responseTxt.setImage(copyResponseText);
         copy_responseTxt.addEventHandler(MouseEvent.MOUSE_CLICKED, this::copyResponseText);
 
-
-        // initialising query param tableview -> refer https://youtu.be/uh5R7D_vFto
+        // initialising query param tableview -> refer https://youtu.be/LQlwTIayyl4
         queryParamKey.setCellValueFactory(new PropertyValueFactory<>("key"));
-        queryParamKey.setCellValueFactory(new PropertyValueFactory<>("value"));
+        queryParamValue.setCellValueFactory(new PropertyValueFactory<>("value"));
+        query_param_table.setEditable(true);
+        queryParamKey.setCellFactory(TextFieldTableCell.forTableColumn());
+        queryParamValue.setCellFactory(TextFieldTableCell.forTableColumn());
 
+        // initialising header tableview
+        headerKey.setCellValueFactory(new PropertyValueFactory<>("key"));
+        headerValue.setCellValueFactory(new PropertyValueFactory<>("value"));
+        header_table.setEditable(true);
+        headerKey.setCellFactory(TextFieldTableCell.forTableColumn());
+        headerValue.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        // adding sample data - to be replaced later with database implementation
+        header_table.setItems(getSampleParams());
+        query_param_table.setItems(getSampleParams());
+    }
+
+    // sample data - to be removed later
+    private ObservableList<KeyValue> getSampleParams() {
+        KeyValue param1 = new KeyValue("desc1", new SimpleStringProperty("Accept"), new SimpleStringProperty("*/*"));
+        KeyValue param2 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+        KeyValue param3 = new KeyValue("desc3", new SimpleStringProperty("Authorizationknvlkav;alkvn;oave;kve;lkvnlnvbkjsbksjdb"), new SimpleStringProperty("Bearer some_token"));
+        KeyValue param4 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+        KeyValue param5 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_toknaejvnernenbw;ebek;bjaekjbebejnggegheiugierhrjnfhierughrgrgiruhgregnfgiuergrengrekgnierugerigernggerigeen"));
+        KeyValue param6 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+        KeyValue param7 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_token"));
+        return FXCollections.observableList(List.of(param1, param2, param3, param4, param5, param6, param7));
     }
 }

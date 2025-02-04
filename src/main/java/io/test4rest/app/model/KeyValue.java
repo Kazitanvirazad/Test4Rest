@@ -10,10 +10,10 @@ public class KeyValue {
     public KeyValue() {
     }
 
-    public KeyValue(String description, String key, String value) {
-        this.key = new SimpleStringProperty(key);
-        this.value = new SimpleStringProperty(value);
+    public KeyValue(String description, SimpleStringProperty key, SimpleStringProperty value) {
         this.description = description;
+        this.key = key;
+        this.value = value;
     }
 
     public String getDescription() {
