@@ -97,13 +97,22 @@ public class MainScreenController implements Initializable {
     public void callApi() {
         ApiService apiService = new DefaultApiServiceImpl();
         ApiRequest request = new ApiRequest();
+
+        // setting url to request
         request.setUrl(url_field.getText().trim());
+
         // adding query params from table view
         addQueryParamsToRequest(request);
+
+        // setting http method from choice box
         request.setMethod(http_method_selector.getValue());
+
+        // setting body to request
         if (StringUtils.hasText(request_body_input.getText())) {
             request.setBody(request_body_input.getText());
         }
+
+        // adding headers from headers table view
         addHeadersToRequest(request);
 
         response = apiService.callApi(request);
@@ -131,7 +140,7 @@ public class MainScreenController implements Initializable {
                     if (isJsonResponse(response)) {
                         prettyTxt = JsonUtils.prettifyJson(response.getBody());
                     } else if (isXmlResponse(response)) {
-                        prettyTxt = XmlUtils.prettify(response.getBody());
+                        prettyTxt = XmlUtils.prettifyXml(response.getBody());
                     } else {
                         return;
                     }

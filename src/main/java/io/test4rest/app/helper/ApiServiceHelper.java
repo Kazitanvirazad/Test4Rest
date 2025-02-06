@@ -3,6 +3,7 @@ package io.test4rest.app.helper;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
 import io.test4rest.app.util.StringUtils;
+import okhttp3.HttpUrl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,6 +16,14 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
+import static io.test4rest.app.constants.CommonConstants.HTTPS_SCHEME;
+import static io.test4rest.app.constants.CommonConstants.HTTP_SCHEME;
+import static io.test4rest.app.constants.CommonConstants.LOCALHOST;
 
 public class ApiServiceHelper {
     private final static Logger log = LogManager.getLogger(ApiServiceHelper.class);
@@ -65,5 +74,52 @@ public class ApiServiceHelper {
             reader.lines().forEach(responseBody::append);
         }
         return responseBody.toString();
+    }
+
+    public static boolean hasHttpSchemeInUrlString(String url) {
+        try {
+            Pattern pattern = Pattern.compile(HTTP_SCHEME, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(url);
+            return matcher.find();
+        } catch (RuntimeException exception) {
+            log.warn(exception.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean isLocalHostInUrl(String url) {
+        try {
+            Pattern pattern = Pattern.compile(LOCALHOST, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(url);
+            return matcher.find();
+        } catch (RuntimeException exception) {
+            log.warn(exception.getMessage());
+        }
+        return false;
+    }
+
+    public static String addHttpScheme(String url, boolean isLocalHostInUrl) {
+        return isLocalHostInUrl ? HTTP_SCHEME : HTTPS_SCHEME + "://" + url;
+    }
+
+    public static Optional<HttpUrl> getHttpUrl(String url) {
+        try {
+            return Optional.ofNullable(HttpUrl.parse(url));
+        } catch (RuntimeException exception) {
+            log.warn(exception.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    public static void addQueryParamsToHttpUrl(ApiRequest request, HttpUrl httpUrl) {
+        try {
+            for (Map.Entry<String, String> entry : request.getQueryParams().entrySet()) {
+                if (StringUtils.hasText(entry.getKey()))
+                    httpUrl = httpUrl.newBuilder().setQueryParameter(entry.getKey(),
+                            StringUtils.hasText(entry.getValue()) ? entry.getValue() : EMPTY_STRING).build();
+            }
+        } catch (Exception exception) {
+            log.warn(exception.getMessage());
+        }
     }
 }

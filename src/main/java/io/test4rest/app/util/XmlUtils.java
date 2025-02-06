@@ -20,7 +20,7 @@ import static io.test4rest.app.constants.http.MediaType.APPLICATION_XML;
 public class XmlUtils {
     private final static Logger log = LogManager.getLogger(XmlUtils.class);
 
-    public static String prettify(String xml) {
+    public static String prettifyXml(String xml) {
         try {
             final InputSource inputSource = new InputSource(new StringReader(xml));
             final Node document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputSource).getDocumentElement();

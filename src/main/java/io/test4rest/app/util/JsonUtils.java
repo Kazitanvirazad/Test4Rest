@@ -28,6 +28,6 @@ public class JsonUtils {
         return response != null &&
                 !response.getHeaders().isEmpty() &&
                 response.getHeaders().containsKey(CONTENT_TYPE) &&
-                response.getHeaders().get(CONTENT_TYPE).equalsIgnoreCase(APPLICATION_JSON);
+                APPLICATION_JSON.equalsIgnoreCase(response.getHeaders().get(CONTENT_TYPE));
     }
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 
-public class HttpStatusCodeMapper {
+public final class HttpStatusCodeMapper {
     private final static Map<Integer, String> statusCodes;
 
     static {

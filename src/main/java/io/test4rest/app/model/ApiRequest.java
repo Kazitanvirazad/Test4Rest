@@ -1,9 +1,12 @@
 package io.test4rest.app.model;
 
 import io.test4rest.app.constants.http.HttpMethod;
+import io.test4rest.app.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 
 public class ApiRequest {
     private String url;
@@ -48,7 +51,8 @@ public class ApiRequest {
         if (this.headers == null) {
             this.headers = new HashMap<>();
         }
-        this.headers.put(key, value);
+        if (StringUtils.hasText(key))
+            this.headers.put(key, StringUtils.hasText(value) ? value : EMPTY_STRING);
     }
 
     public HttpMethod getMethod() {
@@ -82,6 +86,7 @@ public class ApiRequest {
         if (this.queryParams == null) {
             this.queryParams = new HashMap<>();
         }
-        this.queryParams.put(key, value);
+        if (StringUtils.hasText(key))
+            this.queryParams.put(key, StringUtils.hasText(value) ? value : EMPTY_STRING);
     }
 }

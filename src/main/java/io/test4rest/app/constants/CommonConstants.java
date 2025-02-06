@@ -10,4 +10,7 @@ public final class CommonConstants {
     public static final String APP_TITLE = "Test4Rest";
     public static final String XML_DECLARATION = "<?xml";
     public static final String SPLIT_URL_AND_QUERY_PARAM_REGEX = "\\?(?!\\?)";
+    public static final String HTTP_SCHEME = "http";
+    public static final String HTTPS_SCHEME = "https";
+    public static final String LOCALHOST = "localhost";
 }

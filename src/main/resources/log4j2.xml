@@ -34,5 +34,9 @@
             <AppenderRef ref="console"/>
             <AppenderRef ref="log-file"/>
         </Logger>
+        <Logger name="warn-logger" level="WARN">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="log-file"/>
+        </Logger>
     </Loggers>
 </Configuration>
