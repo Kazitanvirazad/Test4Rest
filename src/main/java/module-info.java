@@ -4,6 +4,7 @@ module io.test4rest.app {
     requires org.apache.logging.log4j;
     requires java.net.http;
     requires com.google.gson;
+    requires java.xml;
 
 
     opens io.test4rest.app to javafx.fxml;
@@ -11,4 +12,5 @@ module io.test4rest.app {
     exports io.test4rest.app.controller;
     exports io.test4rest.app.constants;
     exports io.test4rest.app.model;
+    exports io.test4rest.app.constants.http;
 }

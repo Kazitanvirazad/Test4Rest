@@ -1,6 +1,5 @@
 package io.test4rest.app.service.impl;
 
-import io.test4rest.app.helper.ApiServiceHelper;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
 import io.test4rest.app.service.ApiService;
@@ -13,21 +12,24 @@ import java.net.URI;
 import java.net.URL;
 
 import static io.test4rest.app.constants.CommonConstants.AMPERSAND_CHAR;
+import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
+import static io.test4rest.app.constants.http.HttpStatusCodeMapper.getStatusCodeValue;
+import static io.test4rest.app.helper.ApiServiceHelper.addRequestBodyToHttpURLConnection;
+import static io.test4rest.app.helper.ApiServiceHelper.addRequestHeaders;
+import static io.test4rest.app.helper.ApiServiceHelper.addResponseHeaders;
+import static io.test4rest.app.helper.ApiServiceHelper.getResponseBody;
+import static io.test4rest.app.util.URLUtils.getQueryParam;
+import static io.test4rest.app.util.URLUtils.urlEncode;
 
 public class DefaultApiServiceImpl implements ApiService {
     private final static Logger log = LogManager.getLogger(DefaultApiServiceImpl.class);
-    private final ApiServiceHelper apiServiceHelper;
-
-    public DefaultApiServiceImpl() {
-        this.apiServiceHelper = new ApiServiceHelper();
-    }
 
     @Override
     public ApiResponse callApi(ApiRequest request) {
         ApiResponse response = new ApiResponse();
 
         // creating query param string
-        StringBuilder queries = apiServiceHelper.getQueryParam(request);
+        StringBuilder queries = getQueryParam(request);
 
         try {
             URI uri = new URI(request.getUrl());
@@ -36,8 +38,9 @@ public class DefaultApiServiceImpl implements ApiService {
                 if (query == null) {
                     query = queries.toString();
                 } else {
-                    query += AMPERSAND_CHAR + queries;
+                    query += !queries.isEmpty() ? AMPERSAND_CHAR + queries : EMPTY_STRING;
                 }
+                query = urlEncode(query);
                 uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), query, uri.getFragment());
             }
             URL url = uri.toURL();
@@ -48,10 +51,10 @@ public class DefaultApiServiceImpl implements ApiService {
             httpURLConnection.setRequestMethod(request.getMethod().getHttpMethodName());
 
             // adding request headers
-            apiServiceHelper.addRequestHeaders(httpURLConnection, request);
+            addRequestHeaders(httpURLConnection, request);
 
             // adding request body
-            apiServiceHelper.addRequestBodyToHttpURLConnection(httpURLConnection, request);
+            addRequestBodyToHttpURLConnection(httpURLConnection, request);
             httpURLConnection.connect();
 
             InputStream inputStream = httpURLConnection.getInputStream();
@@ -59,11 +62,11 @@ public class DefaultApiServiceImpl implements ApiService {
             response.setDuration(System.currentTimeMillis() - startTime);
             response.setStatusCode(httpURLConnection.getResponseCode());
 
-            apiServiceHelper.addResponseHeaders(httpURLConnection, response);
+            addResponseHeaders(httpURLConnection, response);
 
-            String responseBody = apiServiceHelper.getResponseBody(inputStream);
+            String responseBody = getResponseBody(inputStream);
             response.setBody(responseBody);
-            response.setResponseStatus(httpURLConnection.getResponseMessage());
+            response.setResponseStatus(getStatusCodeValue(httpURLConnection.getResponseCode()));
         } catch (Exception exception) {
             log.error(exception);
             response.setNetworkError(true);

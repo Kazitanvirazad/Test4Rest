@@ -1,13 +1,14 @@
 package io.test4rest.app.controller;
 
-import io.test4rest.app.constants.HttpMethod;
+import io.test4rest.app.constants.http.HttpMethod;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
 import io.test4rest.app.model.KeyValue;
 import io.test4rest.app.service.ApiService;
 import io.test4rest.app.service.impl.DefaultApiServiceImpl;
-import io.test4rest.app.util.JsonUtil;
+import io.test4rest.app.util.JsonUtils;
 import io.test4rest.app.util.StringUtils;
+import io.test4rest.app.util.XmlUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,13 +41,15 @@ import java.util.ResourceBundle;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 import static io.test4rest.app.constants.CommonConstants.MILLIS_SHORT_FORM;
-import static io.test4rest.app.constants.HttpMethod.DELETE;
-import static io.test4rest.app.constants.HttpMethod.GET;
-import static io.test4rest.app.constants.HttpMethod.HEAD;
-import static io.test4rest.app.constants.HttpMethod.OPTIONS;
-import static io.test4rest.app.constants.HttpMethod.PATCH;
-import static io.test4rest.app.constants.HttpMethod.POST;
-import static io.test4rest.app.constants.HttpMethod.PUT;
+import static io.test4rest.app.constants.http.HttpMethod.DELETE;
+import static io.test4rest.app.constants.http.HttpMethod.GET;
+import static io.test4rest.app.constants.http.HttpMethod.HEAD;
+import static io.test4rest.app.constants.http.HttpMethod.OPTIONS;
+import static io.test4rest.app.constants.http.HttpMethod.PATCH;
+import static io.test4rest.app.constants.http.HttpMethod.POST;
+import static io.test4rest.app.constants.http.HttpMethod.PUT;
+import static io.test4rest.app.util.JsonUtils.isJsonResponse;
+import static io.test4rest.app.util.XmlUtils.isXmlResponse;
 
 public class MainScreenController implements Initializable {
     private static final Logger log = LogManager.getLogger(MainScreenController.class);
@@ -95,6 +98,7 @@ public class MainScreenController implements Initializable {
         ApiService apiService = new DefaultApiServiceImpl();
         ApiRequest request = new ApiRequest();
         request.setUrl(url_field.getText().trim());
+        // adding query params from table view
         addQueryParamsToRequest(request);
         request.setMethod(http_method_selector.getValue());
         if (StringUtils.hasText(request_body_input.getText())) {
@@ -123,7 +127,14 @@ public class MainScreenController implements Initializable {
                 isResponsePrettified = false;
             } else {
                 if (response.getPrettyText() == null) {
-                    String prettyTxt = JsonUtil.prettifyJson(response.getBody());
+                    String prettyTxt;
+                    if (isJsonResponse(response)) {
+                        prettyTxt = JsonUtils.prettifyJson(response.getBody());
+                    } else if (isXmlResponse(response)) {
+                        prettyTxt = XmlUtils.prettify(response.getBody());
+                    } else {
+                        return;
+                    }
                     response.setPrettyText(prettyTxt);
                 }
                 response_body_output.setText(response.getPrettyText());
@@ -256,18 +267,24 @@ public class MainScreenController implements Initializable {
 
         // adding sample data - to be replaced later with database implementation
         header_table.setItems(getSampleParams());
-        query_param_table.setItems(getSampleParams());
+        query_param_table.setItems(getSampleQueryParams());
     }
 
     // sample data - to be removed later
     private ObservableList<KeyValue> getSampleParams() {
-        KeyValue param1 = new KeyValue("desc1", new SimpleStringProperty("Accept"), new SimpleStringProperty("*/*"));
+        KeyValue param1 = new KeyValue("desc1", new SimpleStringProperty("city"), new SimpleStringProperty("Bangalore"));
         KeyValue param2 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
-        KeyValue param3 = new KeyValue("desc3", new SimpleStringProperty("Authorizationknvlkav;alkvn;oave;kve;lkvnlnvbkjsbksjdb"), new SimpleStringProperty("Bearer some_token"));
-        KeyValue param4 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
-        KeyValue param5 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_toknaejvnernenbw;ebek;bjaekjbebejnggegheiugierhrjnfhierughrgrgiruhgregnfgiuergrengrekgnierugerigernggerigeen"));
-        KeyValue param6 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
-        KeyValue param7 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_token"));
-        return FXCollections.observableList(List.of(param1, param2, param3, param4, param5, param6, param7));
+//        KeyValue param3 = new KeyValue("desc3", new SimpleStringProperty("Authorizationknvlkav;alkvn;oave;kve;lkvnlnvbkjsbksjdb"), new SimpleStringProperty("Bearer some_token"));
+//        KeyValue param4 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+//        KeyValue param5 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_toknaejvnernenbw;ebek;bjaekjbebejnggegheiugierhrjnfhierughrgrgiruhgregnfgiuergrengrekgnierugerigernggerigeen"));
+//        KeyValue param6 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+//        KeyValue param7 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_token"));
+        return FXCollections.observableList(List.of(/*param1, */param2/*, param3, param4, param5, param6, param7*/));
+    }
+
+    // sample data - to be removed later
+    private ObservableList<KeyValue> getSampleQueryParams() {
+        KeyValue param1 = new KeyValue("desc1", new SimpleStringProperty("city"), new SimpleStringProperty("Bangalore"));
+        return FXCollections.observableList(List.of(param1));
     }
 }

@@ -1,6 +1,6 @@
 package io.test4rest.app.model;
 
-import io.test4rest.app.constants.HttpMethod;
+import io.test4rest.app.constants.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;

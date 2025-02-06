@@ -8,4 +8,6 @@ public final class CommonConstants {
     public static final String QUERY_CHAR = "?";
     public static final String MILLIS_SHORT_FORM = "ms";
     public static final String APP_TITLE = "Test4Rest";
+    public static final String XML_DECLARATION = "<?xml";
+    public static final String SPLIT_URL_AND_QUERY_PARAM_REGEX = "\\?(?!\\?)";
 }

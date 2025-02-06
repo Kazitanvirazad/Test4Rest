@@ -1,4 +1,4 @@
-package io.test4rest.app.constants;
+package io.test4rest.app.constants.http;
 
 public enum HttpMethod {
     GET("GET"),

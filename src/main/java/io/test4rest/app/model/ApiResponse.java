@@ -1,7 +1,7 @@
 package io.test4rest.app.model;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ApiResponse {
     private String body;
@@ -25,7 +25,7 @@ public class ApiResponse {
     }
 
     public ApiResponse() {
-        this.headers = new HashMap<>();
+        this.headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     public String getBody() {
