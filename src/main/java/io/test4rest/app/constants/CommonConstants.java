@@ -4,6 +4,7 @@ public final class CommonConstants {
     public static final String EMPTY_STRING = "";
     public static final String EMPTY_SPACE = " ";
     public static final String EQUALS_CHAR = "=";
+    public static final String COMMA = ",";
     public static final String AMPERSAND_CHAR = "&";
     public static final String QUERY_CHAR = "?";
     public static final String MILLIS_SHORT_FORM = "ms";

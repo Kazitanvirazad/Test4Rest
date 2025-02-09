@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -35,8 +36,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
@@ -89,6 +92,22 @@ public class MainScreenController implements Initializable {
     public TableColumn<KeyValue, String> headerKey;
     @FXML
     public TableColumn<KeyValue, String> headerValue;
+    @FXML
+    public TextField query_add_key;
+    @FXML
+    public TextField query_add_value;
+    @FXML
+    public Button add_query_bttn;
+    @FXML
+    public TextField header_add_key;
+    @FXML
+    public TextField header_add_value;
+    @FXML
+    public Button add_header_bttn;
+    @FXML
+    public ImageView delete_selected_queries;
+    @FXML
+    public ImageView delete_selected_headers;
 
     private boolean isResponsePrettified;
     private ApiResponse response;
@@ -213,7 +232,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public void updateHeaderValue(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
-        KeyValue selectedHeader = query_param_table.getSelectionModel().getSelectedItem();
+        KeyValue selectedHeader = header_table.getSelectionModel().getSelectedItem();
         selectedHeader.setValue(cellEditEvent.getNewValue());
     }
 
@@ -226,6 +245,58 @@ public class MainScreenController implements Initializable {
     private void addQueryParamsToRequest(ApiRequest request) {
         if (query_param_table != null && !query_param_table.getItems().isEmpty()) {
             query_param_table.getItems().forEach(keyValue -> request.addQueryParam(keyValue.getKey(), keyValue.getValue()));
+        }
+    }
+
+    @FXML
+    public void addNewQueryParam(ActionEvent event) {
+        KeyValue query = new KeyValue();
+        if (StringUtils.hasText(query_add_key.getText())) {
+            query.setKey(query_add_key.getText());
+            query.setValue(StringUtils.hasText(query_add_value.getText()) ? query_add_value.getText() : EMPTY_STRING);
+            List<KeyValue> queries = new ArrayList<>();
+            queries.add(query);
+            queries.addAll(query_param_table.getItems());
+            query_param_table.setItems(FXCollections.observableList(queries));
+
+            // clearing the input box
+            query_add_key.setText(EMPTY_STRING);
+            query_add_value.setText(EMPTY_STRING);
+        }
+    }
+
+    @FXML
+    public void addNewHeader(ActionEvent event) {
+        KeyValue header = new KeyValue();
+        if (StringUtils.hasText(header_add_key.getText())) {
+            header.setKey(header_add_key.getText());
+            header.setValue(StringUtils.hasText(header_add_value.getText()) ? header_add_value.getText() : EMPTY_STRING);
+            List<KeyValue> headers = new ArrayList<>();
+            headers.add(header);
+            headers.addAll(header_table.getItems());
+            header_table.setItems(FXCollections.observableList(headers));
+
+            // clearing the input box
+            header_add_key.setText(EMPTY_STRING);
+            header_add_value.setText(EMPTY_STRING);
+        }
+    }
+
+    private void deleteSelectedQueries(MouseEvent event) {
+        // fetching all selected items from tableview
+        ObservableList<KeyValue> selectedQueries = query_param_table.getSelectionModel().getSelectedItems();
+        if (selectedQueries != null && !selectedQueries.isEmpty()) {
+            List<KeyValue> queries = query_param_table.getItems().stream().filter(keyValue -> !selectedQueries.contains(keyValue)).collect(Collectors.toList());
+            query_param_table.setItems(FXCollections.observableList(queries));
+        }
+    }
+
+    private void deleteSelectedHeaders(MouseEvent event) {
+        // fetching all selected items from tableview
+        ObservableList<KeyValue> selectedHeaders = header_table.getSelectionModel().getSelectedItems();
+        if (selectedHeaders != null && !selectedHeaders.isEmpty()) {
+            List<KeyValue> headers = header_table.getItems().stream().filter(keyValue -> !selectedHeaders.contains(keyValue)).collect(Collectors.toList());
+            header_table.setItems(FXCollections.observableList(headers));
         }
     }
 
@@ -261,22 +332,33 @@ public class MainScreenController implements Initializable {
         copy_responseTxt.addEventHandler(MouseEvent.MOUSE_CLICKED, this::copyResponseText);
 
         // initialising query param tableview -> refer https://youtu.be/LQlwTIayyl4
+        query_param_table.setEditable(true);
+        // allowing multiple row selection
+        query_param_table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         queryParamKey.setCellValueFactory(new PropertyValueFactory<>("key"));
         queryParamValue.setCellValueFactory(new PropertyValueFactory<>("value"));
-        query_param_table.setEditable(true);
         queryParamKey.setCellFactory(TextFieldTableCell.forTableColumn());
         queryParamValue.setCellFactory(TextFieldTableCell.forTableColumn());
 
         // initialising header tableview
+        header_table.setEditable(true);
+        // allowing multiple row selection
+        header_table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         headerKey.setCellValueFactory(new PropertyValueFactory<>("key"));
         headerValue.setCellValueFactory(new PropertyValueFactory<>("value"));
-        header_table.setEditable(true);
         headerKey.setCellFactory(TextFieldTableCell.forTableColumn());
         headerValue.setCellFactory(TextFieldTableCell.forTableColumn());
 
         // adding sample data - to be replaced later with database implementation
         header_table.setItems(getSampleParams());
         query_param_table.setItems(getSampleQueryParams());
+
+        // initialising delete queries and delete headers button
+        Image deleteButton = new Image("/static/icons/delete-24.png");
+        delete_selected_queries.setImage(deleteButton);
+        delete_selected_queries.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedQueries);
+        delete_selected_headers.setImage(deleteButton);
+        delete_selected_headers.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedHeaders);
     }
 
     // sample data - to be removed later

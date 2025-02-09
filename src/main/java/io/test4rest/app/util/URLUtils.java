@@ -1,12 +1,13 @@
 package io.test4rest.app.util;
 
 import io.test4rest.app.model.ApiRequest;
+import io.test4rest.app.model.KeyValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
+import java.util.List;
 
 import static io.test4rest.app.constants.CommonConstants.AMPERSAND_CHAR;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
@@ -18,12 +19,11 @@ public class URLUtils {
 
     public static StringBuilder getQueryParam(ApiRequest request) {
         StringBuilder queries = new StringBuilder();
-        Map<String, String> queryParams = request.getQueryParams();
+        List<KeyValue> queryParams = request.getQueryParams();
         if (!queryParams.isEmpty()) {
-            for (String key : queryParams.keySet()) {
+            for (KeyValue keyValue : queryParams) {
                 StringBuilder query = new StringBuilder();
-                String value = queryParams.get(key);
-                query.append(key.trim()).append(EQUALS_CHAR).append(StringUtils.hasText(value) ? value : EMPTY_STRING);
+                query.append(keyValue.getKey().trim()).append(EQUALS_CHAR).append(StringUtils.hasText(keyValue.getValue()) ? keyValue.getValue() : EMPTY_STRING);
                 if (!queries.isEmpty()) {
                     queries.append(AMPERSAND_CHAR);
                 }

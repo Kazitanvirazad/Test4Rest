@@ -8,6 +8,8 @@ public class KeyValue {
     private String description;
 
     public KeyValue() {
+        this.key = new SimpleStringProperty();
+        this.value = new SimpleStringProperty();
     }
 
     public KeyValue(String description, SimpleStringProperty key, SimpleStringProperty value) {

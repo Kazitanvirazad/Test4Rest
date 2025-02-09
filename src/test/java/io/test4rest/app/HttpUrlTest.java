@@ -121,4 +121,57 @@ public class HttpUrlTest {
         HttpUrl httpUrl = HttpUrl.parse(url);
         assertEquals("http://www.google.com/name=kazi&role=java%20developer#comment", httpUrl.url().toString());
     }
+
+    @Test
+    @DisplayName(value = "Add same query param manually already present in url will not replace the existing one and place it in the end of the url")
+    void addSameQueryParamManuallyAlreadyPresentInUrlWillNotReplaceTheExistingOneAndPlaceItInTheEndOfTheUrl() {
+        String url = "http://www.google.com?name=kazi&city=bangalore&role=java";
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        assertEquals("http://www.google.com/?name=kazi&city=bangalore&role=java&name=tanvir", httpUrl.newBuilder()
+                .addQueryParameter("name", "tanvir").build().url().toString());
+    }
+
+    @Test
+    @DisplayName(value = "Add multiple same query param in url should remain same after parsing")
+    void addMultipleSameQueryParamInUrlShouldRemainSameAfterParsing() {
+        String url = "http://www.google.com?name=kazi&city=bangalore&name=kazi";
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        assertEquals("http://www.google.com/?name=kazi&city=bangalore&name=kazi", httpUrl.url().toString());
+    }
+
+    @Test
+    @DisplayName(value = "Add multiple same query param with different value in url should remain same after parsing")
+    void addMultipleSameQueryParamWithDifferentValueInUrlShouldRemainSameAfterParsing() {
+        String url = "http://www.google.com?name=kazi&city=bangalore&name=fahim";
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        assertEquals("http://www.google.com/?name=kazi&city=bangalore&name=fahim", httpUrl.url().toString());
+    }
+
+    @Test
+    @DisplayName(value = "Adding multiple same query param manually will be not be replaced by next similar value")
+    void addingMultipleSameQueryParamManuallyWillNotBeReplacedByNextSimilarLastValue() {
+        String url = "http://www.google.com/";
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        assertEquals("http://www.google.com/?name=tanvir&role=java&name=tanvir", httpUrl.newBuilder()
+                .addQueryParameter("name", "tanvir")
+                .addQueryParameter("role", "java")
+                .addQueryParameter("name", "tanvir").build().url().toString());
+    }
+
+    @Test
+    @DisplayName(value = "Should parse url with only key")
+    void shouldParseUrlWithOnlyKey() {
+        String url = "http://www.google.com?name";
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        assertEquals("http://www.google.com/?name", httpUrl.url().toString());
+
+    }
+
+    @Test
+    @DisplayName(value = "Should parse url with only key and return key")
+    void shouldParseUrlWithOnlyKeyAndReturnKey() {
+        String url = "http://www.google.com?name";
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        assertEquals("name", httpUrl.query());
+    }
 }

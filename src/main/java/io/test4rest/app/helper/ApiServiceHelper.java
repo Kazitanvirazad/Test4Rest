@@ -2,6 +2,7 @@ package io.test4rest.app.helper;
 
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
+import io.test4rest.app.model.KeyValue;
 import io.test4rest.app.util.StringUtils;
 import okhttp3.HttpUrl;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static io.test4rest.app.constants.CommonConstants.COMMA;
+import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 import static io.test4rest.app.constants.CommonConstants.HTTPS_SCHEME;
 import static io.test4rest.app.constants.CommonConstants.HTTP_SCHEME;
@@ -29,10 +32,10 @@ public class ApiServiceHelper {
     private final static Logger log = LogManager.getLogger(ApiServiceHelper.class);
 
     public static void addRequestHeaders(HttpURLConnection httpURLConnection, ApiRequest request) {
-        Map<String, String> headers = request.getHeaders();
+        List<KeyValue> headers = request.getHeaders();
         if (!headers.isEmpty()) {
-            for (String key : headers.keySet()) {
-                httpURLConnection.setRequestProperty(key, headers.get(key));
+            for (KeyValue keyValue : headers) {
+                httpURLConnection.setRequestProperty(keyValue.getKey(), keyValue.getValue());
             }
         }
     }
@@ -55,8 +58,7 @@ public class ApiServiceHelper {
                 List<String> valueList = headerEntry.getValue();
                 valueList.forEach(val -> {
                     if (!values.isEmpty()) {
-                        values.append(",");
-                        values.append(val);
+                        values.append(COMMA).append(EMPTY_SPACE).append(val);
                     } else {
                         values.append(val);
                     }
@@ -113,10 +115,11 @@ public class ApiServiceHelper {
 
     public static void addQueryParamsToHttpUrl(ApiRequest request, HttpUrl httpUrl) {
         try {
-            for (Map.Entry<String, String> entry : request.getQueryParams().entrySet()) {
-                if (StringUtils.hasText(entry.getKey()))
-                    httpUrl = httpUrl.newBuilder().setQueryParameter(entry.getKey(),
-                            StringUtils.hasText(entry.getValue()) ? entry.getValue() : EMPTY_STRING).build();
+            for (KeyValue query : request.getQueryParams()) {
+                if (StringUtils.hasText(query.getKey())) {
+                    httpUrl = httpUrl.newBuilder().addQueryParameter(query.getKey(),
+                            StringUtils.hasText(query.getValue()) ? query.getValue() : EMPTY_STRING).build();
+                }
             }
         } catch (Exception exception) {
             log.warn(exception.getMessage());

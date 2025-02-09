@@ -7,7 +7,7 @@ public final class MediaType {
     public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
     public static final String APPLICATION_GRAPHQL_RESPONSE = "application/graphql-response+json";
     public static final String APPLICATION_JSON = "application/json";
-    public static final String APPLICATION_JSON_UTF8 = "application/json;charset=UTF-8";
+    public static final String[] APPLICATION_JSON_UTF8 = {"application/json;charset=UTF-8", "application/json; charset=UTF-8"};
     public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_PROBLEM_JSON = "application/problem+json";
@@ -17,6 +17,7 @@ public final class MediaType {
     public static final String APPLICATION_NDJSON = "application/x-ndjson";
     public static final String APPLICATION_XHTML_XML = "application/xhtml+xml";
     public static final String APPLICATION_XML = "application/xml";
+    public static final String[] APPLICATION_XML_UTF8 = {"application/xml;charset=UTF-8", "application/xml; charset=UTF-8"};
     public static final String IMAGE_GIF = "image/gif";
     public static final String IMAGE_JPEG = "image/jpeg";
     public static final String IMAGE_PNG = "image/png";

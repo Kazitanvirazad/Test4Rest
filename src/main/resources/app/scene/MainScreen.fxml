@@ -62,7 +62,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="query_param_table" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="114.0" prefWidth="570.0">
+                        <TableView fx:id="query_param_table" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="109.0" prefWidth="570.0">
                           <columns>
                             <TableColumn fx:id="queryParamKey" onEditCommit="#updateQueryParamKey" prefWidth="154.0" text="Key" />
                             <TableColumn fx:id="queryParamValue" onEditCommit="#updateQueryParamValue" prefWidth="409.0" text="Value" />
@@ -71,6 +71,16 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
+                        <TextField fx:id="query_add_key" layoutX="2.0" layoutY="113.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" />
+                        <TextField fx:id="query_add_value" layoutX="159.0" layoutY="113.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" />
+                        <Button fx:id="add_query_bttn" layoutX="369.0" layoutY="113.0" mnemonicParsing="false" onAction="#addNewQueryParam" text="Add">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
+                        <ImageView fx:id="delete_selected_queries" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></ImageView>
                      </children>
                   </AnchorPane>
               </content>
@@ -79,7 +89,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                      <TableView fx:id="header_table" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="114.0" prefWidth="570.0">
+                      <TableView fx:id="header_table" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="109.0" prefWidth="570.0">
                           <columns>
                               <TableColumn fx:id="headerKey" onEditCommit="#updateHeaderKey" prefWidth="154.0" text="Key" />
                               <TableColumn fx:id="headerValue" onEditCommit="#updateHeaderValue" prefWidth="409.0" sortable="false" text="Value" />
@@ -88,6 +98,16 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                           </columnResizePolicy>
                       </TableView>
+                        <TextField fx:id="header_add_key" layoutX="2.0" layoutY="113.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" />
+                        <TextField fx:id="header_add_value" layoutX="159.0" layoutY="113.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" />
+                        <Button fx:id="add_header_bttn" layoutX="369.0" layoutY="113.0" mnemonicParsing="false" onAction="#addNewHeader" text="Add">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
+                        <ImageView fx:id="delete_selected_headers" fitHeight="20.0" fitWidth="20.0" layoutX="549.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></ImageView>
                   </children>
               </AnchorPane>
             </content>

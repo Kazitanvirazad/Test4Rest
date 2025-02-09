@@ -7,6 +7,7 @@ module io.test4rest.app {
     requires java.xml;
     requires okhttp3;
     requires jdk.compiler;
+    requires java.xml.crypto;
 
 
     opens io.test4rest.app to javafx.fxml;

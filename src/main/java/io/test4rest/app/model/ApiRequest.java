@@ -3,19 +3,19 @@ package io.test4rest.app.model;
 import io.test4rest.app.constants.http.HttpMethod;
 import io.test4rest.app.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 
 public class ApiRequest {
     private String url;
     private HttpMethod method;
-    private Map<String, String> headers;
+    private List<KeyValue> headers;
     private String body;
-    private Map<String, String> queryParams;
+    private List<KeyValue> queryParams;
 
-    public ApiRequest(String url, HttpMethod method, Map<String, String> headers, String body, Map<String, String> queryParams) {
+    public ApiRequest(String url, HttpMethod method, List<KeyValue> headers, String body, List<KeyValue> queryParams) {
         this.url = url;
         this.method = method;
         this.headers = headers;
@@ -24,8 +24,8 @@ public class ApiRequest {
     }
 
     public ApiRequest() {
-        this.headers = new HashMap<>();
-        this.queryParams = new HashMap<>();
+        this.headers = new ArrayList<>();
+        this.queryParams = new ArrayList<>();
     }
 
     public String getBody() {
@@ -36,23 +36,27 @@ public class ApiRequest {
         this.body = body;
     }
 
-    public Map<String, String> getHeaders() {
+    public List<KeyValue> getHeaders() {
         if (this.headers == null) {
-            this.headers = new HashMap<>();
+            this.headers = new ArrayList<>();
         }
         return headers;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(List<KeyValue> headers) {
         this.headers = headers;
     }
 
     public void addHeader(String key, String value) {
         if (this.headers == null) {
-            this.headers = new HashMap<>();
+            this.headers = new ArrayList<>();
         }
-        if (StringUtils.hasText(key))
-            this.headers.put(key, StringUtils.hasText(value) ? value : EMPTY_STRING);
+        if (StringUtils.hasText(key)) {
+            KeyValue header = new KeyValue();
+            header.setKey(key.trim());
+            header.setValue(StringUtils.hasText(value) ? value.trim() : EMPTY_STRING);
+            this.headers.add(header);
+        }
     }
 
     public HttpMethod getMethod() {
@@ -71,22 +75,26 @@ public class ApiRequest {
         this.url = url;
     }
 
-    public Map<String, String> getQueryParams() {
+    public List<KeyValue> getQueryParams() {
         if (this.queryParams == null) {
-            this.queryParams = new HashMap<>();
+            this.queryParams = new ArrayList<>();
         }
         return queryParams;
     }
 
-    public void setQueryParams(Map<String, String> queryParams) {
+    public void setQueryParams(List<KeyValue> queryParams) {
         this.queryParams = queryParams;
     }
 
     public void addQueryParam(String key, String value) {
         if (this.queryParams == null) {
-            this.queryParams = new HashMap<>();
+            this.queryParams = new ArrayList<>();
         }
-        if (StringUtils.hasText(key))
-            this.queryParams.put(key, StringUtils.hasText(value) ? value : EMPTY_STRING);
+        if (StringUtils.hasText(key)) {
+            KeyValue query = new KeyValue();
+            query.setKey(key);
+            query.setValue(StringUtils.hasText(value) ? value : EMPTY_STRING);
+            this.queryParams.add(query);
+        }
     }
 }

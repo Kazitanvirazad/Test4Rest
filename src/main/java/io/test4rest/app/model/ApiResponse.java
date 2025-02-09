@@ -1,11 +1,15 @@
 package io.test4rest.app.model;
 
-import java.util.Map;
-import java.util.TreeMap;
+import io.test4rest.app.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 
 public class ApiResponse {
     private String body;
-    private Map<String, String> headers;
+    private List<KeyValue> headers;
     private int statusCode;
     private long duration;
     private String prettyText;
@@ -13,7 +17,7 @@ public class ApiResponse {
     private boolean networkError;
     private String errorDisplayMessage;
 
-    public ApiResponse(String body, long duration, String errorDisplayMessage, Map<String, String> headers, boolean networkError, String prettyText, String responseStatus, int statusCode) {
+    public ApiResponse(String body, long duration, String errorDisplayMessage, List<KeyValue> headers, boolean networkError, String prettyText, String responseStatus, int statusCode) {
         this.body = body;
         this.duration = duration;
         this.errorDisplayMessage = errorDisplayMessage;
@@ -25,7 +29,7 @@ public class ApiResponse {
     }
 
     public ApiResponse() {
-        this.headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.headers = new ArrayList<>();
     }
 
     public String getBody() {
@@ -36,16 +40,24 @@ public class ApiResponse {
         this.body = body;
     }
 
-    public Map<String, String> getHeaders() {
+    public List<KeyValue> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(List<KeyValue> headers) {
         this.headers = headers;
     }
 
     public void addHeader(String key, String value) {
-        this.headers.put(key, value);
+        if (this.headers == null) {
+            this.headers = new ArrayList<>();
+        }
+        if (key != null) {
+            KeyValue header = new KeyValue();
+            header.setKey(key);
+            header.setValue(StringUtils.hasText(value) ? value : EMPTY_STRING);
+            this.headers.add(header);
+        }
     }
 
     public int getStatusCode() {
