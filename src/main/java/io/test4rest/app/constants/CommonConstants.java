@@ -14,4 +14,5 @@ public final class CommonConstants {
     public static final String HTTP_SCHEME = "http";
     public static final String HTTPS_SCHEME = "https";
     public static final String LOCALHOST = "localhost";
+    public static final String CHARSET_UTF8 = "charset=UTF-8";
 }

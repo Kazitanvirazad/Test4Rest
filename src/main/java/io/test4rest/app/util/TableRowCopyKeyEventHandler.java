@@ -13,7 +13,7 @@ import javafx.scene.input.KeyEvent;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
 
-public class TableCopyKeyEventHandler implements EventHandler<KeyEvent> {
+public class TableRowCopyKeyEventHandler implements EventHandler<KeyEvent> {
     private final KeyCodeCombination copyKeyCodeCombination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
 
     @Override

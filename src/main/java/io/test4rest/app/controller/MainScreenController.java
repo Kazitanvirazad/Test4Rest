@@ -10,7 +10,7 @@ import io.test4rest.app.util.CollectionUtils;
 import io.test4rest.app.util.JsonUtils;
 import io.test4rest.app.util.StringUtils;
 import io.test4rest.app.util.TableColumnWrapTextCallback;
-import io.test4rest.app.util.TableCopyKeyEventHandler;
+import io.test4rest.app.util.TableRowCopyKeyEventHandler;
 import io.test4rest.app.util.XmlUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -361,7 +361,7 @@ public class MainScreenController implements Initializable {
         queryParamTableKey.setCellFactory(TextFieldTableCell.forTableColumn());
         queryParamTableValue.setCellFactory(TextFieldTableCell.forTableColumn());
         // setting query param tableview row copy to clipboard functionality
-        queryParamTable.setOnKeyPressed(new TableCopyKeyEventHandler());
+        queryParamTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
 
         // initialising header tableview
         headerTable.setEditable(true);
@@ -372,7 +372,7 @@ public class MainScreenController implements Initializable {
         headerTableKey.setCellFactory(TextFieldTableCell.forTableColumn());
         headerTableValue.setCellFactory(TextFieldTableCell.forTableColumn());
         // setting header tableview row copy to clipboard functionality
-        headerTable.setOnKeyPressed(new TableCopyKeyEventHandler());
+        headerTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
 
         // adding sample data - to be replaced later with database implementation
         headerTable.setItems(getSampleParams());
@@ -403,7 +403,7 @@ public class MainScreenController implements Initializable {
         headerResponseTableKey.setCellFactory(new TableColumnWrapTextCallback(headerResponseTableKey));
         headerResponseTableValue.setCellFactory(new TableColumnWrapTextCallback(headerResponseTableValue));
         // setting response header tableview row copy to clipboard functionality
-        headerResponseTable.setOnKeyPressed(new TableCopyKeyEventHandler());
+        headerResponseTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
     }
 
     // sample data - to be removed later
