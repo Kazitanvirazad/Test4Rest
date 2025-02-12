@@ -19,7 +19,7 @@
             <Font size="14.0" />
          </font>
       </TextField>
-      <Button fx:id="sendButton" layoutX="701.0" layoutY="40.0" maxHeight="44.0" maxWidth="90.0" minHeight="44.0" minWidth="90.0" mnemonicParsing="false" onAction="#callApi" prefHeight="44.0" prefWidth="90.0" text="Send" textAlignment="CENTER" textFill="WHITE">
+      <Button fx:id="sendButton" layoutX="700.0" layoutY="40.0" maxHeight="44.0" maxWidth="88.0" minHeight="44.0" minWidth="88.0" mnemonicParsing="false" onAction="#callApi" prefHeight="44.0" prefWidth="88.0" text="Send" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -28,13 +28,13 @@
          </cursor>
       </Button>
       <Text layoutX="218.0" layoutY="307.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Response" />
-      <TabPane layoutX="216.0" layoutY="115.0" prefHeight="168.0" prefWidth="572.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutX="216.0" layoutY="88.0" prefHeight="195.0" prefWidth="572.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
             <Tab text="Query Params">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="queryParamTable" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="109.0" prefWidth="570.0">
+                        <TableView fx:id="queryParamTable" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="135.0" prefWidth="570.0">
                           <columns>
                             <TableColumn fx:id="queryParamTableKey" onEditCommit="#updateQueryParamKey" prefWidth="154.0" text="Key" />
                             <TableColumn fx:id="queryParamTableValue" onEditCommit="#updateQueryParamValue" prefWidth="409.0" text="Value" />
@@ -43,13 +43,13 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TextField fx:id="queryAddKey" layoutX="2.0" layoutY="113.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" />
-                        <TextField fx:id="queryAddValue" layoutX="159.0" layoutY="113.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" />
-                        <Button fx:id="addQueryButton" layoutX="369.0" layoutY="113.0" mnemonicParsing="false" onAction="#addNewQueryParam" text="Add">
+                        <TextField fx:id="queryAddKey" layoutX="2.0" layoutY="139.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" />
+                        <TextField fx:id="queryAddValue" layoutX="159.0" layoutY="139.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" />
+                        <Button fx:id="addQueryButton" layoutX="369.0" layoutY="139.0" mnemonicParsing="false" onAction="#addNewQueryParam" text="Add">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
-                        <ImageView fx:id="deleteSelectedQueries" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="deleteSelectedQueries" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="140.0" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></ImageView>
@@ -61,7 +61,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                      <TableView fx:id="headerTable" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="109.0" prefWidth="570.0">
+                      <TableView fx:id="headerTable" editable="true" layoutX="1.0" layoutY="1.0" prefHeight="135.0" prefWidth="570.0">
                           <columns>
                               <TableColumn fx:id="headerTableKey" onEditCommit="#updateHeaderKey" prefWidth="154.0" text="Key" />
                               <TableColumn fx:id="headerTableValue" onEditCommit="#updateHeaderValue" prefWidth="409.0" sortable="false" text="Value" />
@@ -70,13 +70,13 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                           </columnResizePolicy>
                       </TableView>
-                        <TextField fx:id="headerAddKey" layoutX="2.0" layoutY="113.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" />
-                        <TextField fx:id="headerAddValue" layoutX="159.0" layoutY="113.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" />
-                        <Button fx:id="addHeaderButton" layoutX="369.0" layoutY="113.0" mnemonicParsing="false" onAction="#addNewHeader" text="Add">
+                        <TextField fx:id="headerAddKey" layoutX="2.0" layoutY="139.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" />
+                        <TextField fx:id="headerAddValue" layoutX="159.0" layoutY="139.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" />
+                        <Button fx:id="addHeaderButton" layoutX="369.0" layoutY="139.0" mnemonicParsing="false" onAction="#addNewHeader" text="Add">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
-                        <ImageView fx:id="deleteSelectedHeaders" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="deleteSelectedHeaders" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="140.0" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></ImageView>
@@ -88,7 +88,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="139.0" prefWidth="539.0">
                      <children>
-                        <TextArea fx:id="requestBodyInput" layoutY="25.0" prefHeight="114.0" prefWidth="572.0">
+                        <TextArea fx:id="requestBodyInput" layoutY="50.0" prefHeight="114.0" prefWidth="572.0">
                            <font>
                               <Font size="14.0" />
                            </font>
