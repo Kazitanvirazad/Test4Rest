@@ -29,7 +29,7 @@ public class MainAppLoaderService {
 //            System.out.println("Height: " + newSceneHeight);
         });
 
-        Image appLogo = new Image("/static/logos/test4rest_logo.png");
+        Image appLogo = new Image("/static/logos/test4rest_logo_2.png");
         stage.setMinHeight(540.0);
         stage.setMinWidth(820.0);
         stage.setScene(scene);

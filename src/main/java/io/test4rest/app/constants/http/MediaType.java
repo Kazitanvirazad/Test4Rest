@@ -29,4 +29,6 @@ public final class MediaType {
     public static final String TEXT_MARKDOWN = "text/markdown";
     public static final String TEXT_PLAIN = "text/plain";
     public static final String TEXT_XML = "text/xml";
+    public static final String APPLICATION_JAVASCRIPT = "application/javascript";
+    public static final String TEXT_JAVASCRIPT = "text/javascript";
 }

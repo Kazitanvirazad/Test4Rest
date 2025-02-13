@@ -13,6 +13,7 @@ import io.test4rest.app.util.TableColumnWrapTextCallback;
 import io.test4rest.app.util.TableRowCopyKeyEventHandler;
 import io.test4rest.app.util.XmlUtils;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -54,6 +55,8 @@ import static io.test4rest.app.constants.http.HttpMethod.OPTIONS;
 import static io.test4rest.app.constants.http.HttpMethod.PATCH;
 import static io.test4rest.app.constants.http.HttpMethod.POST;
 import static io.test4rest.app.constants.http.HttpMethod.PUT;
+import static io.test4rest.app.constants.http.ReqResConstants.REQUEST_BODY_TEXT_TYPES;
+import static io.test4rest.app.constants.http.ReqResConstants.REQUEST_BODY_TYPES;
 import static io.test4rest.app.util.JsonUtils.isJsonResponse;
 import static io.test4rest.app.util.XmlUtils.isXmlResponse;
 
@@ -68,7 +71,7 @@ public class MainScreenController implements Initializable {
     @FXML
     public Button sendButton;
     @FXML
-    public TextArea requestBodyInput;
+    public TextArea requestBodyTextInput;
     @FXML
     public TextArea responseBodyOutput;
     @FXML
@@ -119,6 +122,10 @@ public class MainScreenController implements Initializable {
     public TableColumn<KeyValue, String> headerResponseTableKey;
     @FXML
     public TableColumn<KeyValue, String> headerResponseTableValue;
+    @FXML
+    public ChoiceBox<String> requestBodyTypeSelector;
+    @FXML
+    public ChoiceBox<String> requestBodyTextTypeSelector;
 
     private boolean isResponsePrettified;
     private ApiResponse response;
@@ -138,8 +145,8 @@ public class MainScreenController implements Initializable {
         request.setMethod(httpMethodSelector.getValue());
 
         // setting body to request
-        if (StringUtils.hasText(requestBodyInput.getText())) {
-            request.setBody(requestBodyInput.getText());
+        if (StringUtils.hasText(requestBodyTextInput.getText())) {
+            request.setBody(requestBodyTextInput.getText());
         }
 
         // adding headers from headers table view
@@ -321,6 +328,14 @@ public class MainScreenController implements Initializable {
         }
     }
 
+    private void onRequestBodyTypeSelectorChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        requestBodyTypeSelector.setValue(REQUEST_BODY_TYPES[newValue.intValue()]);
+    }
+
+    private void onRequestBodyTextTypeSelectorChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        requestBodyTextTypeSelector.setValue(REQUEST_BODY_TEXT_TYPES[newValue.intValue()]);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // initialising zoom in and out buttons
@@ -404,6 +419,20 @@ public class MainScreenController implements Initializable {
         headerResponseTableValue.setCellFactory(new TableColumnWrapTextCallback(headerResponseTableValue));
         // setting response header tableview row copy to clipboard functionality
         headerResponseTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
+
+        // initialising request body type selector
+        requestBodyTypeSelector.setItems(FXCollections.observableArrayList(REQUEST_BODY_TYPES));
+        requestBodyTypeSelector.setValue(REQUEST_BODY_TYPES[0]);
+        requestBodyTypeSelector.getSelectionModel()
+                .selectedIndexProperty()
+                .addListener(this::onRequestBodyTypeSelectorChanged);
+
+        // initialising request body text type selector
+        requestBodyTextTypeSelector.setItems(FXCollections.observableArrayList(REQUEST_BODY_TEXT_TYPES));
+        requestBodyTextTypeSelector.setValue(REQUEST_BODY_TEXT_TYPES[0]);
+        requestBodyTextTypeSelector.getSelectionModel()
+                .selectedIndexProperty()
+                .addListener(this::onRequestBodyTextTypeSelectorChanged);
     }
 
     // sample data - to be removed later
