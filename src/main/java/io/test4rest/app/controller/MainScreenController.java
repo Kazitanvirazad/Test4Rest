@@ -36,6 +36,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -126,6 +127,8 @@ public class MainScreenController implements Initializable {
     public ChoiceBox<String> requestBodyTypeSelector;
     @FXML
     public ChoiceBox<String> requestBodyTextTypeSelector;
+    @FXML
+    public Text noBodyInfoDisplay;
 
     private boolean isResponsePrettified;
     private ApiResponse response;
@@ -433,6 +436,8 @@ public class MainScreenController implements Initializable {
         requestBodyTextTypeSelector.getSelectionModel()
                 .selectedIndexProperty()
                 .addListener(this::onRequestBodyTextTypeSelectorChanged);
+
+        // initialising no request body info display
     }
 
     // sample data - to be removed later
