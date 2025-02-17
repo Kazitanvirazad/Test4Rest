@@ -9,7 +9,7 @@ import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 
 public class ApiResponse {
     private String body;
-    private List<KeyValue> headers;
+    private List<HeaderKeyValue> headers;
     private int statusCode;
     private long duration;
     private String prettyText;
@@ -17,7 +17,7 @@ public class ApiResponse {
     private boolean networkError;
     private String errorDisplayMessage;
 
-    public ApiResponse(String body, long duration, String errorDisplayMessage, List<KeyValue> headers, boolean networkError, String prettyText, String responseStatus, int statusCode) {
+    public ApiResponse(String body, long duration, String errorDisplayMessage, List<HeaderKeyValue> headers, boolean networkError, String prettyText, String responseStatus, int statusCode) {
         this.body = body;
         this.duration = duration;
         this.errorDisplayMessage = errorDisplayMessage;
@@ -40,11 +40,11 @@ public class ApiResponse {
         this.body = body;
     }
 
-    public List<KeyValue> getHeaders() {
+    public List<HeaderKeyValue> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(List<KeyValue> headers) {
+    public void setHeaders(List<HeaderKeyValue> headers) {
         this.headers = headers;
     }
 
@@ -53,7 +53,7 @@ public class ApiResponse {
             this.headers = new ArrayList<>();
         }
         if (key != null) {
-            KeyValue header = new KeyValue();
+            HeaderKeyValue header = new HeaderKeyValue();
             header.setKey(key);
             header.setValue(StringUtils.hasText(value) ? value : EMPTY_STRING);
             this.headers.add(header);

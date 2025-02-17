@@ -95,16 +95,16 @@
                         </TextArea>
                         <ChoiceBox fx:id="requestBodyTypeSelector" layoutY="4.0" prefHeight="28.0" prefWidth="96.0" />
                         <ChoiceBox fx:id="requestBodyTextTypeSelector" layoutX="476.0" layoutY="4.0" prefHeight="28.0" prefWidth="96.0" />
-                        <Text fx:id="noBodyInfoDisplay" layoutX="191.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Body not added in this Request" />
+                        <Text fx:id="noBodyInfoDisplay" layoutX="191.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                         <TableView layoutY="35.0" prefHeight="148.0" prefWidth="572.0" fx:id="xFormUrlEncodedTableView">
                           <columns>
-                            <TableColumn prefWidth="154.0" text="Key" fx:id="xFormUrlEncodedTableKey" />
-                            <TableColumn prefWidth="417.0" text="Value" fx:id="xFormUrlEncodedTableValue" />
+                            <TableColumn onEditCommit="#updateXFormUrlEncodedEntryKey" prefWidth="154.0" text="Key" fx:id="xFormUrlEncodedTableKey" />
+                            <TableColumn onEditCommit="#updateXFormUrlEncodedEntryValue" prefWidth="417.0" text="Value" fx:id="xFormUrlEncodedTableValue" />
                           </columns>
                         </TableView>
                         <TextField layoutX="1.0" layoutY="186.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" fx:id="xFormUrlEncodedAddKey" />
                         <TextField layoutX="159.0" layoutY="186.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" fx:id="xFormUrlEncodedAddValue" />
-                        <Button fx:id="addXFormUrlEncodedButton" layoutX="369.0" layoutY="186.0" mnemonicParsing="false" text="Add" />
+                        <Button fx:id="addXFormUrlEncodedButton" layoutX="369.0" layoutY="186.0" mnemonicParsing="false" onAction="#addNewXFormUrlEncodedEntry" text="Add" />
                      </children>
                   </AnchorPane>
             </content>

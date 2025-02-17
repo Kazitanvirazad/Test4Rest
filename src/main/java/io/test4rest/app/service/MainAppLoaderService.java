@@ -30,7 +30,7 @@ public class MainAppLoaderService {
         });
 
         Image appLogo = new Image("/static/logos/test4rest_logo_2.png");
-        stage.setMinHeight(540.0);
+        stage.setMinHeight(610.0);
         stage.setMinWidth(820.0);
         stage.setScene(scene);
         stage.getIcons().add(appLogo);

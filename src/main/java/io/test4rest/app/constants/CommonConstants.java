@@ -15,4 +15,5 @@ public final class CommonConstants {
     public static final String HTTPS_SCHEME = "https";
     public static final String LOCALHOST = "localhost";
     public static final String CHARSET_UTF8 = "charset=UTF-8";
+    public static final String NO_REQUEST_BODY_INFO_DISPLAY_TEXT = "Body not added in this Request";
 }

@@ -1,5 +1,6 @@
 package io.test4rest.app.constants.http;
 
+/* static final arrays' elements sequence shall not be changed in case of adding new element in the array */
 public final class MediaType {
     public static final String ALL = "*/*";
     public static final String APPLICATION_ATOM_XML = "application/atom+xml";

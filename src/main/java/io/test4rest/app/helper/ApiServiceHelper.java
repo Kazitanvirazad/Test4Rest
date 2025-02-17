@@ -2,6 +2,7 @@ package io.test4rest.app.helper;
 
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
+import io.test4rest.app.model.HeaderKeyValue;
 import io.test4rest.app.model.KeyValue;
 import io.test4rest.app.util.StringUtils;
 import okhttp3.HttpUrl;
@@ -32,7 +33,7 @@ public class ApiServiceHelper {
     private final static Logger log = LogManager.getLogger(ApiServiceHelper.class);
 
     public static void addRequestHeaders(HttpURLConnection httpURLConnection, ApiRequest request) {
-        List<KeyValue> headers = request.getHeaders();
+        List<HeaderKeyValue> headers = request.getHeaders();
         if (!headers.isEmpty()) {
             for (KeyValue keyValue : headers) {
                 httpURLConnection.setRequestProperty(keyValue.getKey(), keyValue.getValue());

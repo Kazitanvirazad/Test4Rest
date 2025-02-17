@@ -11,11 +11,11 @@ import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 public class ApiRequest {
     private String url;
     private HttpMethod method;
-    private List<KeyValue> headers;
+    private List<HeaderKeyValue> headers;
     private String body;
     private List<KeyValue> queryParams;
 
-    public ApiRequest(String url, HttpMethod method, List<KeyValue> headers, String body, List<KeyValue> queryParams) {
+    public ApiRequest(String url, HttpMethod method, List<HeaderKeyValue> headers, String body, List<KeyValue> queryParams) {
         this.url = url;
         this.method = method;
         this.headers = headers;
@@ -36,14 +36,14 @@ public class ApiRequest {
         this.body = body;
     }
 
-    public List<KeyValue> getHeaders() {
+    public List<HeaderKeyValue> getHeaders() {
         if (this.headers == null) {
             this.headers = new ArrayList<>();
         }
         return headers;
     }
 
-    public void setHeaders(List<KeyValue> headers) {
+    public void setHeaders(List<HeaderKeyValue> headers) {
         this.headers = headers;
     }
 
@@ -52,7 +52,7 @@ public class ApiRequest {
             this.headers = new ArrayList<>();
         }
         if (StringUtils.hasText(key)) {
-            KeyValue header = new KeyValue();
+            HeaderKeyValue header = new HeaderKeyValue();
             header.setKey(key.trim());
             header.setValue(StringUtils.hasText(value) ? value.trim() : EMPTY_STRING);
             this.headers.add(header);

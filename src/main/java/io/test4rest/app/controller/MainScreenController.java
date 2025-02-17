@@ -3,7 +3,9 @@ package io.test4rest.app.controller;
 import io.test4rest.app.constants.http.HttpMethod;
 import io.test4rest.app.model.ApiRequest;
 import io.test4rest.app.model.ApiResponse;
+import io.test4rest.app.model.HeaderKeyValue;
 import io.test4rest.app.model.KeyValue;
+import io.test4rest.app.model.RequestBodyTypeComponentsVisibilityEnabler;
 import io.test4rest.app.service.ApiService;
 import io.test4rest.app.service.impl.DefaultApiServiceImpl;
 import io.test4rest.app.util.CollectionUtils;
@@ -36,7 +38,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,11 +45,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static io.test4rest.app.constants.CommonConstants.EMPTY_SPACE;
 import static io.test4rest.app.constants.CommonConstants.EMPTY_STRING;
 import static io.test4rest.app.constants.CommonConstants.MILLIS_SHORT_FORM;
+import static io.test4rest.app.constants.CommonConstants.NO_REQUEST_BODY_INFO_DISPLAY_TEXT;
+import static io.test4rest.app.constants.http.HttpHeaders.CONTENT_TYPE;
 import static io.test4rest.app.constants.http.HttpMethod.DELETE;
 import static io.test4rest.app.constants.http.HttpMethod.GET;
 import static io.test4rest.app.constants.http.HttpMethod.HEAD;
@@ -56,8 +60,10 @@ import static io.test4rest.app.constants.http.HttpMethod.OPTIONS;
 import static io.test4rest.app.constants.http.HttpMethod.PATCH;
 import static io.test4rest.app.constants.http.HttpMethod.POST;
 import static io.test4rest.app.constants.http.HttpMethod.PUT;
+import static io.test4rest.app.constants.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static io.test4rest.app.constants.http.ReqResConstants.REQUEST_BODY_TEXT_TYPES;
 import static io.test4rest.app.constants.http.ReqResConstants.REQUEST_BODY_TYPES;
+import static io.test4rest.app.constants.http.ReqResConstants.mapRequestBodyTypeToMediaType;
 import static io.test4rest.app.util.JsonUtils.isJsonResponse;
 import static io.test4rest.app.util.XmlUtils.isXmlResponse;
 
@@ -94,11 +100,11 @@ public class MainScreenController implements Initializable {
     @FXML
     public TableColumn<KeyValue, String> queryParamTableValue;
     @FXML
-    public TableView<KeyValue> headerTable;
+    public TableView<HeaderKeyValue> headerTable;
     @FXML
-    public TableColumn<KeyValue, String> headerTableKey;
+    public TableColumn<HeaderKeyValue, String> headerTableKey;
     @FXML
-    public TableColumn<KeyValue, String> headerTableValue;
+    public TableColumn<HeaderKeyValue, String> headerTableValue;
     @FXML
     public TextField queryAddKey;
     @FXML
@@ -118,7 +124,7 @@ public class MainScreenController implements Initializable {
     @FXML
     public ImageView responsePrettifier;
     @FXML
-    public TableView<KeyValue> headerResponseTable;
+    public TableView<HeaderKeyValue> headerResponseTable;
     @FXML
     public TableColumn<KeyValue, String> headerResponseTableKey;
     @FXML
@@ -129,9 +135,22 @@ public class MainScreenController implements Initializable {
     public ChoiceBox<String> requestBodyTextTypeSelector;
     @FXML
     public Text noBodyInfoDisplay;
+    @FXML
+    public TableView<KeyValue> xFormUrlEncodedTableView;
+    @FXML
+    public TableColumn<KeyValue, String> xFormUrlEncodedTableKey;
+    @FXML
+    public TableColumn<KeyValue, String> xFormUrlEncodedTableValue;
+    @FXML
+    public TextField xFormUrlEncodedAddKey;
+    @FXML
+    public TextField xFormUrlEncodedAddValue;
+    @FXML
+    public Button addXFormUrlEncodedButton;
 
-    private boolean isResponsePrettified;
+    private final RequestBodyTypeComponentsVisibilityEnabler requestBodyTypeComponentsVisibilityEnabler = new RequestBodyTypeComponentsVisibilityEnabler();
     private ApiResponse response;
+    private boolean isResponsePrettified;
 
     @FXML
     public void callApi() {
@@ -250,14 +269,14 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void updateHeaderKey(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
-        KeyValue selectedHeader = headerTable.getSelectionModel().getSelectedItem();
+    public void updateHeaderKey(TableColumn.CellEditEvent<HeaderKeyValue, String> cellEditEvent) {
+        HeaderKeyValue selectedHeader = headerTable.getSelectionModel().getSelectedItem();
         selectedHeader.setKey(cellEditEvent.getNewValue());
     }
 
     @FXML
-    public void updateHeaderValue(TableColumn.CellEditEvent<KeyValue, String> cellEditEvent) {
-        KeyValue selectedHeader = headerTable.getSelectionModel().getSelectedItem();
+    public void updateHeaderValue(TableColumn.CellEditEvent<HeaderKeyValue, String> cellEditEvent) {
+        HeaderKeyValue selectedHeader = headerTable.getSelectionModel().getSelectedItem();
         selectedHeader.setValue(cellEditEvent.getNewValue());
     }
 
@@ -279,9 +298,8 @@ public class MainScreenController implements Initializable {
         if (StringUtils.hasText(queryAddKey.getText())) {
             query.setKey(queryAddKey.getText());
             query.setValue(StringUtils.hasText(queryAddValue.getText()) ? queryAddValue.getText() : EMPTY_STRING);
-            List<KeyValue> queries = new ArrayList<>();
+            List<KeyValue> queries = new ArrayList<>(queryParamTable.getItems());
             queries.add(query);
-            queries.addAll(queryParamTable.getItems());
             queryParamTable.setItems(FXCollections.observableList(queries));
 
             // clearing the input box
@@ -292,13 +310,12 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public void addNewHeader(ActionEvent event) {
-        KeyValue header = new KeyValue();
+        HeaderKeyValue header = new HeaderKeyValue();
         if (StringUtils.hasText(headerAddKey.getText())) {
             header.setKey(headerAddKey.getText());
             header.setValue(StringUtils.hasText(headerAddValue.getText()) ? headerAddValue.getText() : EMPTY_STRING);
-            List<KeyValue> headers = new ArrayList<>();
+            List<HeaderKeyValue> headers = new ArrayList<>(headerTable.getItems());
             headers.add(header);
-            headers.addAll(headerTable.getItems());
             headerTable.setItems(FXCollections.observableList(headers));
 
             // clearing the input box
@@ -318,9 +335,9 @@ public class MainScreenController implements Initializable {
 
     private void deleteSelectedHeaders(MouseEvent event) {
         // fetching all selected items from tableview
-        ObservableList<KeyValue> selectedHeaders = headerTable.getSelectionModel().getSelectedItems();
+        ObservableList<HeaderKeyValue> selectedHeaders = headerTable.getSelectionModel().getSelectedItems();
         if (selectedHeaders != null && !selectedHeaders.isEmpty()) {
-            List<KeyValue> headers = headerTable.getItems().stream().filter(keyValue -> !selectedHeaders.contains(keyValue)).collect(Collectors.toList());
+            List<HeaderKeyValue> headers = headerTable.getItems().stream().filter(keyValue -> !selectedHeaders.contains(keyValue)).collect(Collectors.toList());
             headerTable.setItems(FXCollections.observableList(headers));
         }
     }
@@ -333,10 +350,100 @@ public class MainScreenController implements Initializable {
 
     private void onRequestBodyTypeSelectorChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         requestBodyTypeSelector.setValue(REQUEST_BODY_TYPES[newValue.intValue()]);
+
+        // enabling visibility for request body components after changing request body type selector
+        if (REQUEST_BODY_TYPES[0].equalsIgnoreCase(REQUEST_BODY_TYPES[newValue.intValue()])) {
+            List<HeaderKeyValue> headersTableViewList = headerTable.getItems()
+                    .stream()
+                    .filter(header -> !header.isAddedByRequestBodyTextTypeSelector())
+                    .toList();
+            headerTable.setItems(FXCollections.observableList(headersTableViewList));
+            requestBodyTypeComponentsVisibilityEnabler.enableNoRequestBodyInfoText();
+        }
+        if (REQUEST_BODY_TYPES[2].equalsIgnoreCase(REQUEST_BODY_TYPES[newValue.intValue()])) {
+            mapRequestBodyTypeSelectorToHeaderTableView(APPLICATION_FORM_URLENCODED);
+            requestBodyTypeComponentsVisibilityEnabler.enableXFormUrlEncodedTableView();
+        }
+        if (REQUEST_BODY_TYPES[3].equalsIgnoreCase(REQUEST_BODY_TYPES[newValue.intValue()])) {
+            String selectedMediaType = mapRequestBodyTypeToMediaType(requestBodyTextTypeSelector.getValue());
+            mapRequestBodyTypeSelectorToHeaderTableView(selectedMediaType);
+            requestBodyTypeComponentsVisibilityEnabler.enableRequestBodyTextInputTextArea();
+        }
+
+        // setting visibility for request body components after changing request body type selector
+        setRequestBodyComponentsVisibility();
     }
 
     private void onRequestBodyTextTypeSelectorChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         requestBodyTextTypeSelector.setValue(REQUEST_BODY_TEXT_TYPES[newValue.intValue()]);
+        String selectedMediaType = mapRequestBodyTypeToMediaType(REQUEST_BODY_TEXT_TYPES[newValue.intValue()]);
+        mapRequestBodyTypeSelectorToHeaderTableView(selectedMediaType);
+    }
+
+    private void mapRequestBodyTypeSelectorToHeaderTableView(String mediaType) {
+        AtomicBoolean isExistsContentTypeHeaderByRequestBodyTextTypeSelector = new AtomicBoolean(false);
+        // get the headers table view list and update content type header
+        List<HeaderKeyValue> headersTableViewList = headerTable.getItems()
+                .stream()
+                .peek(header -> {
+                    if (CONTENT_TYPE.equalsIgnoreCase(header.getKey()) && header.isAddedByRequestBodyTextTypeSelector()) {
+                        header.setValue(mediaType);
+                        isExistsContentTypeHeaderByRequestBodyTextTypeSelector.set(true);
+                    }
+                })
+                .collect(Collectors.toList());
+        // else create a selector added content type header add the new header in headers table view
+        if (!isExistsContentTypeHeaderByRequestBodyTextTypeSelector.get()) {
+            HeaderKeyValue newHeader = new HeaderKeyValue();
+            newHeader.setKey(CONTENT_TYPE);
+            newHeader.setValue(mediaType);
+            newHeader.setAddedByRequestBodyTextTypeSelector(true);
+            headersTableViewList.add(newHeader);
+        }
+        headerTable.setItems(FXCollections.observableList(headersTableViewList));
+    }
+
+    @FXML
+    public void addNewXFormUrlEncodedEntry(ActionEvent event) {
+        KeyValue formEntry = new KeyValue();
+        if (StringUtils.hasText(xFormUrlEncodedAddKey.getText())) {
+            formEntry.setKey(xFormUrlEncodedAddKey.getText());
+            formEntry.setValue(StringUtils.hasText(xFormUrlEncodedAddValue.getText()) ? xFormUrlEncodedAddValue.getText() : EMPTY_STRING);
+            List<KeyValue> formEntries = new ArrayList<>(xFormUrlEncodedTableView.getItems());
+            formEntries.add(formEntry);
+            xFormUrlEncodedTableView.setItems(FXCollections.observableList(formEntries));
+
+            // clearing the input box
+            xFormUrlEncodedAddKey.setText(EMPTY_STRING);
+            xFormUrlEncodedAddValue.setText(EMPTY_STRING);
+        }
+    }
+
+    @FXML
+    public void updateXFormUrlEncodedEntryKey(TableColumn.CellEditEvent<KeyValue, String> keyValueStringCellEditEvent) {
+        KeyValue selectedFormEntry = xFormUrlEncodedTableView.getSelectionModel().getSelectedItem();
+        selectedFormEntry.setKey(keyValueStringCellEditEvent.getNewValue());
+    }
+
+    @FXML
+    public void updateXFormUrlEncodedEntryValue(TableColumn.CellEditEvent<KeyValue, String> keyValueStringCellEditEvent) {
+        KeyValue selectedFormEntry = xFormUrlEncodedTableView.getSelectionModel().getSelectedItem();
+        selectedFormEntry.setValue(keyValueStringCellEditEvent.getNewValue());
+    }
+
+    private void setRequestBodyComponentsVisibility() {
+        // setting visibility for all components of x-www-form-urlencoded
+        xFormUrlEncodedTableView.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        xFormUrlEncodedAddKey.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        xFormUrlEncodedAddValue.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        addXFormUrlEncodedButton.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+
+        // setting visibility for all components of raw
+        requestBodyTextInput.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableRequestBodyTextInputTextArea());
+        requestBodyTextTypeSelector.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableRequestBodyTextInputTextArea());
+
+        // setting visibility for no body info display
+        noBodyInfoDisplay.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableNoRequestBodyInfoText());
     }
 
     @Override
@@ -393,7 +500,7 @@ public class MainScreenController implements Initializable {
         headerTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
 
         // adding sample data - to be replaced later with database implementation
-        headerTable.setItems(getSampleParams());
+        headerTable.setItems(getSampleHeaderParams());
         queryParamTable.setItems(getSampleQueryParams());
 
         // initialising delete queries and delete headers button
@@ -438,17 +545,33 @@ public class MainScreenController implements Initializable {
                 .addListener(this::onRequestBodyTextTypeSelectorChanged);
 
         // initialising no request body info display
+        noBodyInfoDisplay.setText(NO_REQUEST_BODY_INFO_DISPLAY_TEXT);
+
+        // initialising x-www-form-urlencoded table view
+        xFormUrlEncodedTableView.setEditable(true);
+        // allowing multiple row selection
+        xFormUrlEncodedTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        xFormUrlEncodedTableKey.setCellValueFactory(new PropertyValueFactory<>("key"));
+        xFormUrlEncodedTableValue.setCellValueFactory(new PropertyValueFactory<>("value"));
+        xFormUrlEncodedTableKey.setCellFactory(TextFieldTableCell.forTableColumn());
+        xFormUrlEncodedTableValue.setCellFactory(TextFieldTableCell.forTableColumn());
+        // setting xFormUrlEncoded tableview row copy to clipboard functionality
+        xFormUrlEncodedTableView.setOnKeyPressed(new TableRowCopyKeyEventHandler());
+
+        // setting visibility for request body components
+        requestBodyTypeComponentsVisibilityEnabler.enableNoRequestBodyInfoText();
+        setRequestBodyComponentsVisibility();
     }
 
     // sample data - to be removed later
-    private ObservableList<KeyValue> getSampleParams() {
-        KeyValue param1 = new KeyValue("desc1", new SimpleStringProperty("city"), new SimpleStringProperty("Bangalore"));
-        KeyValue param2 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
-//        KeyValue param3 = new KeyValue("desc3", new SimpleStringProperty("Authorizationknvlkav;alkvn;oave;kve;lkvnlnvbkjsbksjdb"), new SimpleStringProperty("Bearer some_token"));
-//        KeyValue param4 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
-//        KeyValue param5 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_toknaejvnernenbw;ebek;bjaekjbebejnggegheiugierhrjnfhierughrgrgiruhgregnfgiuergrengrekgnierugerigernggerigeen"));
-//        KeyValue param6 = new KeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
-//        KeyValue param7 = new KeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_token"));
+    private ObservableList<HeaderKeyValue> getSampleHeaderParams() {
+        HeaderKeyValue param1 = new HeaderKeyValue("desc1", new SimpleStringProperty("city"), new SimpleStringProperty("Bangalore"));
+        HeaderKeyValue param2 = new HeaderKeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+//        HeaderKeyValue param3 = new HeaderKeyValue("desc3", new SimpleStringProperty("Authorizationknvlkav;alkvn;oave;kve;lkvnlnvbkjsbksjdb"), new SimpleStringProperty("Bearer some_token"));
+//        HeaderKeyValue param4 = new HeaderKeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+//        HeaderKeyValue param5 = new HeaderKeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_toknaejvnernenbw;ebek;bjaekjbebejnggegheiugierhrjnfhierughrgrgiruhgregnfgiuergrengrekgnierugerigernggerigeen"));
+//        HeaderKeyValue param6 = new HeaderKeyValue("desc2", new SimpleStringProperty("Content-Type"), new SimpleStringProperty("application/json"));
+//        HeaderKeyValue param7 = new HeaderKeyValue("desc3", new SimpleStringProperty("Authorization"), new SimpleStringProperty("Bearer some_token"));
         return FXCollections.observableList(List.of(/*param1, */param2/*, param3, param4, param5, param6, param7*/));
     }
 
