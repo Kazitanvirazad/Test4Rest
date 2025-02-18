@@ -118,9 +118,9 @@ public class MainScreenController implements Initializable {
     @FXML
     public Button addHeaderButton;
     @FXML
-    public ImageView deleteSelectedQueries;
+    public ImageView deleteSelectedQueriesButton;
     @FXML
-    public ImageView deleteSelectedHeaders;
+    public ImageView deleteSelectedHeadersButton;
     @FXML
     public ImageView responsePrettifier;
     @FXML
@@ -136,7 +136,7 @@ public class MainScreenController implements Initializable {
     @FXML
     public Text noBodyInfoDisplay;
     @FXML
-    public TableView<KeyValue> xFormUrlEncodedTableView;
+    public TableView<KeyValue> xFormUrlEncodedTable;
     @FXML
     public TableColumn<KeyValue, String> xFormUrlEncodedTableKey;
     @FXML
@@ -147,6 +147,8 @@ public class MainScreenController implements Initializable {
     public TextField xFormUrlEncodedAddValue;
     @FXML
     public Button addXFormUrlEncodedButton;
+    @FXML
+    public ImageView deleteSelectedXFormUrlEncodedEntryButton;
 
     private final RequestBodyTypeComponentsVisibilityEnabler requestBodyTypeComponentsVisibilityEnabler = new RequestBodyTypeComponentsVisibilityEnabler();
     private ApiResponse response;
@@ -327,7 +329,7 @@ public class MainScreenController implements Initializable {
     private void deleteSelectedQueries(MouseEvent event) {
         // fetching all selected items from tableview
         ObservableList<KeyValue> selectedQueries = queryParamTable.getSelectionModel().getSelectedItems();
-        if (selectedQueries != null && !selectedQueries.isEmpty()) {
+        if (!CollectionUtils.isEmpty(selectedQueries)) {
             List<KeyValue> queries = queryParamTable.getItems().stream().filter(keyValue -> !selectedQueries.contains(keyValue)).collect(Collectors.toList());
             queryParamTable.setItems(FXCollections.observableList(queries));
         }
@@ -336,9 +338,18 @@ public class MainScreenController implements Initializable {
     private void deleteSelectedHeaders(MouseEvent event) {
         // fetching all selected items from tableview
         ObservableList<HeaderKeyValue> selectedHeaders = headerTable.getSelectionModel().getSelectedItems();
-        if (selectedHeaders != null && !selectedHeaders.isEmpty()) {
+        if (!CollectionUtils.isEmpty(selectedHeaders)) {
             List<HeaderKeyValue> headers = headerTable.getItems().stream().filter(keyValue -> !selectedHeaders.contains(keyValue)).collect(Collectors.toList());
             headerTable.setItems(FXCollections.observableList(headers));
+        }
+    }
+
+    private void deleteSelectedXFormUrlEncodedEntry(MouseEvent event) {
+        // fetching all selected items from tableview
+        ObservableList<KeyValue> selectedXFormUrlEncodedEntries = xFormUrlEncodedTable.getSelectionModel().getSelectedItems();
+        if (!CollectionUtils.isEmpty(selectedXFormUrlEncodedEntries)) {
+            List<KeyValue> xFormUrlEncodedEntries = xFormUrlEncodedTable.getItems().stream().filter(keyValue -> !selectedXFormUrlEncodedEntries.contains(keyValue)).collect(Collectors.toList());
+            xFormUrlEncodedTable.setItems(FXCollections.observableList(xFormUrlEncodedEntries));
         }
     }
 
@@ -369,9 +380,6 @@ public class MainScreenController implements Initializable {
             mapRequestBodyTypeSelectorToHeaderTableView(selectedMediaType);
             requestBodyTypeComponentsVisibilityEnabler.enableRequestBodyTextInputTextArea();
         }
-
-        // setting visibility for request body components after changing request body type selector
-        setRequestBodyComponentsVisibility();
     }
 
     private void onRequestBodyTextTypeSelectorChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -409,9 +417,9 @@ public class MainScreenController implements Initializable {
         if (StringUtils.hasText(xFormUrlEncodedAddKey.getText())) {
             formEntry.setKey(xFormUrlEncodedAddKey.getText());
             formEntry.setValue(StringUtils.hasText(xFormUrlEncodedAddValue.getText()) ? xFormUrlEncodedAddValue.getText() : EMPTY_STRING);
-            List<KeyValue> formEntries = new ArrayList<>(xFormUrlEncodedTableView.getItems());
+            List<KeyValue> formEntries = new ArrayList<>(xFormUrlEncodedTable.getItems());
             formEntries.add(formEntry);
-            xFormUrlEncodedTableView.setItems(FXCollections.observableList(formEntries));
+            xFormUrlEncodedTable.setItems(FXCollections.observableList(formEntries));
 
             // clearing the input box
             xFormUrlEncodedAddKey.setText(EMPTY_STRING);
@@ -421,33 +429,38 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public void updateXFormUrlEncodedEntryKey(TableColumn.CellEditEvent<KeyValue, String> keyValueStringCellEditEvent) {
-        KeyValue selectedFormEntry = xFormUrlEncodedTableView.getSelectionModel().getSelectedItem();
+        KeyValue selectedFormEntry = xFormUrlEncodedTable.getSelectionModel().getSelectedItem();
         selectedFormEntry.setKey(keyValueStringCellEditEvent.getNewValue());
     }
 
     @FXML
     public void updateXFormUrlEncodedEntryValue(TableColumn.CellEditEvent<KeyValue, String> keyValueStringCellEditEvent) {
-        KeyValue selectedFormEntry = xFormUrlEncodedTableView.getSelectionModel().getSelectedItem();
+        KeyValue selectedFormEntry = xFormUrlEncodedTable.getSelectionModel().getSelectedItem();
         selectedFormEntry.setValue(keyValueStringCellEditEvent.getNewValue());
     }
 
-    private void setRequestBodyComponentsVisibility() {
-        // setting visibility for all components of x-www-form-urlencoded
-        xFormUrlEncodedTableView.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
-        xFormUrlEncodedAddKey.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
-        xFormUrlEncodedAddValue.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
-        addXFormUrlEncodedButton.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+    private void bindRequestBodyComponentsVisibility() {
+        // binding visibility for all components of x-www-form-urlencoded
+        xFormUrlEncodedTable.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        xFormUrlEncodedAddKey.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        xFormUrlEncodedAddValue.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        addXFormUrlEncodedButton.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
+        deleteSelectedXFormUrlEncodedEntryButton.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableXFormUrlEncodedTableView());
 
-        // setting visibility for all components of raw
-        requestBodyTextInput.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableRequestBodyTextInputTextArea());
-        requestBodyTextTypeSelector.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableRequestBodyTextInputTextArea());
+        // binding visibility for all components of raw
+        requestBodyTextInput.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableRequestBodyTextInputTextArea());
+        requestBodyTextTypeSelector.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableRequestBodyTextInputTextArea());
 
-        // setting visibility for no body info display
-        noBodyInfoDisplay.setVisible(requestBodyTypeComponentsVisibilityEnabler.isEnableNoRequestBodyInfoText());
+        // binding visibility for no body info display
+        noBodyInfoDisplay.visibleProperty().bind(requestBodyTypeComponentsVisibilityEnabler.isEnableNoRequestBodyInfoText());
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // creating delete entry button and greyed delete entry button icon
+        Image deleteEntryButtonIcon = new Image("/static/icons/delete-24.png");
+        Image deleteEntryButtonGreyIcon = new Image("/static/icons/grey-delete-24.png");
+
         // initialising zoom in and out buttons
         Image zoomIn = new Image("/static/icons/zoom-in-24.png");
         Image zoomOut = new Image("/static/icons/zoom-out-24.png");
@@ -503,17 +516,17 @@ public class MainScreenController implements Initializable {
         headerTable.setItems(getSampleHeaderParams());
         queryParamTable.setItems(getSampleQueryParams());
 
-        // initialising delete queries and delete headers button
-        Image deleteButton = new Image("/static/icons/delete-24.png");
-        deleteSelectedQueries.setImage(deleteButton);
-        deleteSelectedQueries.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedQueries);
-        deleteSelectedHeaders.setImage(deleteButton);
-        deleteSelectedHeaders.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedHeaders);
-
+        // initialising delete queries button
+        deleteSelectedQueriesButton.setImage(deleteEntryButtonIcon);
+        deleteSelectedQueriesButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedQueries);
         // set visibility of query delete button if query tableview is empty
-        deleteSelectedQueries.visibleProperty().bind(queryParamTable.itemsProperty().isNotEqualTo(FXCollections.emptyObservableList()));
+        deleteSelectedQueriesButton.visibleProperty().bind(queryParamTable.itemsProperty().isNotEqualTo(FXCollections.emptyObservableList()));
+
+        // initialising delete headers button
+        deleteSelectedHeadersButton.setImage(deleteEntryButtonIcon);
+        deleteSelectedHeadersButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedHeaders);
         // set visibility of header delete button if header tableview is empty
-        deleteSelectedHeaders.visibleProperty().bind(headerTable.itemsProperty().isNotEqualTo(FXCollections.emptyObservableList()));
+        deleteSelectedHeadersButton.visibleProperty().bind(headerTable.itemsProperty().isNotEqualTo(FXCollections.emptyObservableList()));
 
         // setting response prettifier button
         Image responsePrettifierButton = new Image("/static/icons/curly-brackets-24.png");
@@ -548,19 +561,31 @@ public class MainScreenController implements Initializable {
         noBodyInfoDisplay.setText(NO_REQUEST_BODY_INFO_DISPLAY_TEXT);
 
         // initialising x-www-form-urlencoded table view
-        xFormUrlEncodedTableView.setEditable(true);
+        xFormUrlEncodedTable.setEditable(true);
         // allowing multiple row selection
-        xFormUrlEncodedTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        xFormUrlEncodedTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         xFormUrlEncodedTableKey.setCellValueFactory(new PropertyValueFactory<>("key"));
         xFormUrlEncodedTableValue.setCellValueFactory(new PropertyValueFactory<>("value"));
         xFormUrlEncodedTableKey.setCellFactory(TextFieldTableCell.forTableColumn());
         xFormUrlEncodedTableValue.setCellFactory(TextFieldTableCell.forTableColumn());
         // setting xFormUrlEncoded tableview row copy to clipboard functionality
-        xFormUrlEncodedTableView.setOnKeyPressed(new TableRowCopyKeyEventHandler());
+        xFormUrlEncodedTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
 
-        // setting visibility for request body components
+        // initialising delete X-www-Form-UrlEncoded entry
+        deleteSelectedXFormUrlEncodedEntryButton.setImage(deleteEntryButtonIcon);
+        deleteSelectedXFormUrlEncodedEntryButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedXFormUrlEncodedEntry);
+        // set visibility of X-www-Form-UrlEncoded delete button if xFormUrlEncoded tableview is empty
+//        deleteSelectedXFormUrlEncodedEntryButton.visibleProperty().bind(xFormUrlEncodedTable.itemsProperty().isNotEqualTo(FXCollections.emptyObservableList()));
+//        deleteSelectedXFormUrlEncodedEntryButton.imageProperty().bind(Bindings.createObjectBinding(() ->
+//                CollectionUtils.isEmpty(xFormUrlEncodedTable.getItems()) ?
+//                        deleteEntryButtonGreyIcon : deleteEntryButtonIcon
+//        ));
+
+        // enabling visibility for request body components to no request body info text
         requestBodyTypeComponentsVisibilityEnabler.enableNoRequestBodyInfoText();
-        setRequestBodyComponentsVisibility();
+
+        // binding the visibility of request body components
+        bindRequestBodyComponentsVisibility();
     }
 
     // sample data - to be removed later

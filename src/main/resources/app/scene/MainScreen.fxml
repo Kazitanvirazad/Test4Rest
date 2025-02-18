@@ -49,7 +49,7 @@
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
-                        <ImageView fx:id="deleteSelectedQueries" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="191.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="deleteSelectedQueriesButton" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="191.0" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></ImageView>
@@ -76,7 +76,7 @@
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
-                        <ImageView fx:id="deleteSelectedHeaders" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="191.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="deleteSelectedHeadersButton" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="191.0" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></ImageView>
@@ -96,7 +96,7 @@
                         <ChoiceBox fx:id="requestBodyTypeSelector" layoutY="4.0" prefHeight="28.0" prefWidth="96.0" />
                         <ChoiceBox fx:id="requestBodyTextTypeSelector" layoutX="476.0" layoutY="4.0" prefHeight="28.0" prefWidth="96.0" />
                         <Text fx:id="noBodyInfoDisplay" layoutX="191.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-                        <TableView layoutY="35.0" prefHeight="148.0" prefWidth="572.0" fx:id="xFormUrlEncodedTableView">
+                        <TableView layoutY="35.0" prefHeight="148.0" prefWidth="572.0" fx:id="xFormUrlEncodedTable">
                           <columns>
                             <TableColumn onEditCommit="#updateXFormUrlEncodedEntryKey" prefWidth="154.0" text="Key" fx:id="xFormUrlEncodedTableKey" />
                             <TableColumn onEditCommit="#updateXFormUrlEncodedEntryValue" prefWidth="417.0" text="Value" fx:id="xFormUrlEncodedTableValue" />
@@ -104,7 +104,15 @@
                         </TableView>
                         <TextField layoutX="1.0" layoutY="186.0" prefHeight="25.0" prefWidth="154.0" promptText="Key" fx:id="xFormUrlEncodedAddKey" />
                         <TextField layoutX="159.0" layoutY="186.0" prefHeight="25.0" prefWidth="200.0" promptText="Value" fx:id="xFormUrlEncodedAddValue" />
-                        <Button fx:id="addXFormUrlEncodedButton" layoutX="369.0" layoutY="186.0" mnemonicParsing="false" onAction="#addNewXFormUrlEncodedEntry" text="Add" />
+                        <Button fx:id="addXFormUrlEncodedButton" layoutX="369.0" layoutY="186.0" mnemonicParsing="false" onAction="#addNewXFormUrlEncodedEntry" text="Add">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
+                        <ImageView fx:id="deleteSelectedXFormUrlEncodedEntryButton" fitHeight="20.0" fitWidth="20.0" layoutX="550.0" layoutY="191.0" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
                      </children>
                   </AnchorPane>
             </content>
