@@ -14,7 +14,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ChoiceBox>
-      <TextField fx:id="urlField" layoutX="315.0" layoutY="40.0" maxHeight="45.0" minHeight="45.0" minWidth="380.0" onAction="#callApi" prefHeight="45.0" prefWidth="380.0" promptText="Enter URL">
+      <TextField fx:id="urlField" layoutX="312.0" layoutY="40.0" maxHeight="45.0" minHeight="45.0" minWidth="380.0" onAction="#callApi" prefHeight="45.0" prefWidth="383.0" promptText="Enter URL">
          <font>
             <Font size="14.0" />
          </font>
