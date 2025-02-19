@@ -1,2 +1,2 @@
-## Test4Rest Api Client
+## Test4Rest cross-platform Api Client software for desktop
 ### Development in progress...
