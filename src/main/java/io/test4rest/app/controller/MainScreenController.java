@@ -14,6 +14,7 @@ import io.test4rest.app.util.StringUtils;
 import io.test4rest.app.util.TableColumnWrapTextCallback;
 import io.test4rest.app.util.TableRowCopyKeyEventHandler;
 import io.test4rest.app.util.XmlUtils;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -21,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.SelectionMode;
@@ -571,15 +573,18 @@ public class MainScreenController implements Initializable {
         // setting xFormUrlEncoded tableview row copy to clipboard functionality
         xFormUrlEncodedTable.setOnKeyPressed(new TableRowCopyKeyEventHandler());
 
-        // initialising delete X-www-Form-UrlEncoded entry
-        deleteSelectedXFormUrlEncodedEntryButton.setImage(deleteEntryButtonIcon);
+        // initialising delete X-www-Form-UrlEncoded entry button event handler
         deleteSelectedXFormUrlEncodedEntryButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this::deleteSelectedXFormUrlEncodedEntry);
-        // set visibility of X-www-Form-UrlEncoded delete button if xFormUrlEncoded tableview is empty
-//        deleteSelectedXFormUrlEncodedEntryButton.visibleProperty().bind(xFormUrlEncodedTable.itemsProperty().isNotEqualTo(FXCollections.emptyObservableList()));
-//        deleteSelectedXFormUrlEncodedEntryButton.imageProperty().bind(Bindings.createObjectBinding(() ->
-//                CollectionUtils.isEmpty(xFormUrlEncodedTable.getItems()) ?
-//                        deleteEntryButtonGreyIcon : deleteEntryButtonIcon
-//        ));
+        // change icon of X-www-Form-UrlEncoded delete button if xFormUrlEncoded tableview is empty
+        deleteSelectedXFormUrlEncodedEntryButton.imageProperty().bind(
+                Bindings.when(xFormUrlEncodedTable.itemsProperty().isEqualTo(FXCollections.emptyObservableList()))
+                        .then(deleteEntryButtonGreyIcon)
+                        .otherwise(deleteEntryButtonIcon));
+        // change cursor over X-www-Form-UrlEncoded delete button if xFormUrlEncoded tableview is empty
+        deleteSelectedXFormUrlEncodedEntryButton.cursorProperty().bind(
+                Bindings.when(xFormUrlEncodedTable.itemsProperty().isEqualTo(FXCollections.emptyObservableList()))
+                        .then(Cursor.DEFAULT)
+                        .otherwise(Cursor.HAND));
 
         // enabling visibility for request body components to no request body info text
         requestBodyTypeComponentsVisibilityEnabler.enableNoRequestBodyInfoText();
